@@ -1,3 +1,5 @@
+mod appearance;
+mod preview;
 mod documents;
 mod editor;
 #[cfg(desktop)]
@@ -190,6 +192,7 @@ fn argument_path(arguments: impl Iterator<Item = String>, cwd: &Path) -> Option<
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    if preview::run_cli() { return; }
     let builder = tauri::Builder::default()
         .manage(Store::default())
         .manage(watcher::WatchState::default());
@@ -223,7 +226,9 @@ pub fn run() {
             open_in_editor,
             editor::get_editor,
             editor::choose_editor,
-            watch_document
+            watch_document,
+            appearance::get_appearance,
+            appearance::set_appearance
         ])
         .setup(|app| {
             #[cfg(desktop)]

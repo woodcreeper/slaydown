@@ -2,6 +2,7 @@ import './reader.css';
 import './style.css';
 import { renderMarkdown } from './renderer';
 import { sample } from './sample';
+import { readingStyles, normalizeAppearance, type Appearance } from './appearance';
 import { applyTint, normalizeTint } from './tint';
 import { capturePosition, restorePosition, scrollInstantly } from './reading-position';
 import { documentFromFile, isDesktop, native, openLink, type MarkdownDocument } from './platform';
@@ -35,13 +36,6 @@ let searchMatches: HTMLElement[] = [];
 let activeHeading = '';
 let toastTimer: ReturnType<typeof setTimeout>;
 let fontSize = 17;
-const readingStyles = [
-  { id: 'folio', name: 'SlayDown', description: 'Calm & spacious' },
-  { id: 'code', name: 'VS Code', description: 'Compact & technical' },
-  { id: 'writer', name: 'iA Writer', description: 'Classic serif' },
-  { id: 'github', name: 'GitHub', description: 'Familiar & structured' },
-  { id: 'omarchy', name: 'Omarchy', description: 'Block type & mono' },
-] as const;
 let readingStyle: string = 'folio';
 let tint: string | null = null;
 const tintSwatches = [
@@ -61,13 +55,21 @@ let watchHealthy = true;
 let refreshTimer: ReturnType<typeof setTimeout>;
 let watchQueue: Promise<void> = Promise.resolve();
 let theme: 'light' | 'dark' | 'system' = 'system';
+let legacyAppearance: Appearance | null = null;
 try {
-  const settings = JSON.parse(localStorage.getItem('folio:settings') || '{}');
-  if (['light','dark','system'].includes(settings.theme)) theme = settings.theme;
-  if (readingStyles.some(style => style.id === settings.readingStyle)) readingStyle = settings.readingStyle;
-  tint = normalizeTint(settings.tint);
-  if (Number.isFinite(settings.fontSize)) fontSize = Math.min(23, Math.max(14, settings.fontSize));
+  const stored = localStorage.getItem('folio:settings');
+  if (stored) legacyAppearance = normalizeAppearance(JSON.parse(stored));
 } catch { /* Browser storage is optional. */ }
+let appearanceReady = !isDesktop;
+let appearanceQueue: Promise<void> = Promise.resolve();
+let appearancePending = 0;
+let appearanceRevision = 0;
+function assignAppearance(value: Appearance) {
+  ({ theme, fontSize, readingStyle, tint } = value);
+}
+if (legacyAppearance) assignAppearance(legacyAppearance);
+// Hide the first frame until the native preferences have been loaded.
+if (isDesktop) document.documentElement.style.visibility = 'hidden';
 
 $('#app').innerHTML = `
   <header class="titlebar">
@@ -97,7 +99,7 @@ $('#app').innerHTML = `
   <input id="file-input" type="file" accept=".md,.markdown,.mdown,.mkd,text/markdown" hidden />
 `;
 
-function settings() {
+function settings(persist = true) {
   scrollIntent++;
   const position = capturePosition($('#reading-scroll'), sourceMode ? $('#source-content') : $('#reader'));
   document.documentElement.dataset.theme = theme;
@@ -114,7 +116,18 @@ function settings() {
   restorePosition($('#reading-scroll'), sourceMode ? $('#source-content') : $('#reader'), position);
   $('#smaller').toggleAttribute('disabled', fontSize <= 14);
   $('#larger').toggleAttribute('disabled', fontSize >= 23);
-  try { localStorage.setItem('folio:settings', JSON.stringify({ theme, fontSize, readingStyle, tint })); } catch { /* Optional. */ }
+  if (!persist || !appearanceReady) return;
+  const value = { theme, fontSize, readingStyle, tint };
+  appearanceRevision++;
+  if (isDesktop) {
+    appearancePending++;
+    appearanceQueue = appearanceQueue.then(async () => {
+      try { await native('set_appearance', { settings: value }); }
+      catch (error) { notify(String(error)); }
+      finally { appearancePending--; }
+    });
+  }
+  try { localStorage.setItem('folio:settings', JSON.stringify(value)); } catch { /* Optional. */ }
 }
 function notify(message: string) {
   const toast = $('#toast'); toast.textContent = message; toast.hidden = false;
@@ -394,8 +407,30 @@ if (!isDesktop) {
   document.addEventListener('drop', event => { event.preventDefault(); dragDepth = 0; $('#drop-overlay').hidden = true; const file = event.dataTransfer?.files[0]; if (file) void attempt(async () => showDocument(await documentFromFile(file))); });
 }
 if (!/Mac|iPhone|iPad/.test(navigator.platform)) $('#open-key').textContent = 'Ctrl O';
-settings(); void showDocument(demo);
+settings(false); void showDocument(demo);
 if (isDesktop) void attempt(async () => {
+  try {
+    const saved = await native<Appearance>('get_appearance', { legacy: legacyAppearance });
+    if (saved) assignAppearance(saved);
+    settings(false);
+    appearanceReady = true;
+  } catch (error) { notify(String(error)); appearanceReady = true; }
+  finally { document.documentElement.style.visibility = ''; }
+  let appearanceLoading = false;
+  const syncAppearance = async () => {
+    if (appearancePending || appearanceLoading) return;
+    appearanceLoading = true;
+    const revision = appearanceRevision;
+    try {
+      const saved = await native<Appearance>('get_appearance', { legacy: null });
+      if (saved && !appearancePending && revision === appearanceRevision && JSON.stringify(saved) !== JSON.stringify(normalizeAppearance({ theme, fontSize, readingStyle, tint }))) {
+        assignAppearance(saved); settings(false);
+      }
+    } catch (error) { notify(String(error)); }
+    finally { appearanceLoading = false; }
+  };
+  window.addEventListener('focus', () => { void syncAppearance(); });
+  setInterval(() => { if (!document.hidden) void syncAppearance(); }, 2000);
   const bootSelection = selection;
   const { listen } = await import('@tauri-apps/api/event');
   await listen<MarkdownDocument>('document-opened', event => { void showDocument(event.payload); });

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework><UseWPF>true</UseWPF><LangVersion>latest</LangVersion>
+    <AssemblyName>QuickLook.Plugin.SlayDown</AssemblyName><Version>0.3.0</Version>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="QuickLook.Common"><HintPath>$(QuickLookPath)/QuickLook.Common.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Web.Extensions" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4078.44" />
+    <None Update="QuickLook.Plugin.Metadata.config" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

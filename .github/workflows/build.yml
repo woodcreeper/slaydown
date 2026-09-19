@@ -63,6 +63,16 @@ jobs:
             sleep 1
           done
           npm run test:ui
+      - name: Build Windows Space-bar adapter
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/build-windows-preview.ps1
+      - name: Package Linux Space-bar adapter
+        if: runner.os == 'Linux'
+        run: |
+          node scripts/build-linux-preview.mjs
+          mkdir -p release-assets
+          tar -czf release-assets/SlayDown-Sushi.tar.gz -C build SlayDown-Sushi
       - name: Build packages
         run: npm run desktop:build -- ${{ matrix.args }}
         env:
@@ -79,11 +89,39 @@ jobs:
           if-no-files-found: error
           path: |
             release-assets/*.zip
+            release-assets/*.qlplugin
+            release-assets/*.tar.gz
             src-tauri/target/release/bundle/nsis/*-setup.exe
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/appimage/*.AppImage
-  release:
+  sushi:
+    name: Sushi Space-bar integration
     needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: SlayDown-Linux
+          path: artifacts
+      - name: Install reader and preview dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep
+          sudo apt-get install -y ./artifacts/*.deb
+          mkdir -p src-tauri/target/release
+          ln -s /usr/bin/slaydown src-tauri/target/release/slaydown
+          mkdir -p build
+          tar -xzf artifacts/SlayDown-Sushi.tar.gz -C build
+      - name: Render Markdown through the actual Sushi host
+        run: xvfb-run -a dbus-run-session -- bash scripts/test-sushi.sh
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: SlayDown-Sushi-diagnostics
+          path: test-results/sushi.log
+  release:
+    needs: [build, sushi]
     if: github.event_name == 'workflow_dispatch' && inputs.version != '' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

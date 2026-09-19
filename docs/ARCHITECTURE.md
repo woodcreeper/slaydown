@@ -21,11 +21,11 @@ SlayDown is a desktop-first Markdown viewer with a shared rendering core. Mobile
 
 The app uses the OS webview through Tauri. It does not include Electron, React, an editor, or a background service. Linux AppImage packaging may include additional runtime libraries for portability. The shared renderer includes only eleven common highlighting grammars. The local Apple Silicon Mac app is approximately 3.8 MB installed (universal and other platform builds differ); build dependencies and caches are much larger and are excluded from the app.
 
-Markdown files are neither uploaded nor written by SlayDown; the external editor owns edits. SlayDown writes only its own editor preference, and the frontend stores display preferences. Remote images are placeholders; web and mail links open only after a click. Raw HTML is displayed as text. This makes the rendering behavior predictable for untrusted Markdown, with the same output in the app and Quick Look.
+Markdown files are neither uploaded nor written by SlayDown; the external editor owns edits. SlayDown writes only its own editor and appearance preferences; browser-only mode uses local storage. Remote images are placeholders; web and mail links open only after a click. Raw HTML is displayed as text. This makes the rendering behavior predictable for untrusted Markdown, with the same output in the app and Quick Look.
 
 ## Editing path
 
-Add an explicit editor pane which changes the source string and reuses `renderMarkdown`. Add saving as a separate native command with a document revision/mtime check and conflict handling. Keep the read-only Quick Look provider independent. The current source viewer is not an editor; no save API or filesystem write permission is present.
+Add an explicit editor pane which changes the source string and reuses `renderMarkdown`. Add saving as a separate native command with a document revision/mtime check and conflict handling. Keep the read-only Quick Look provider independent. The current source viewer is not an editor; no document-save API or general filesystem write permission is present.
 
 Do not add a plugin framework until a concrete feature requires it. Reasonable next increments are local Markdown links, a persistent recent-file list (paths only, after a privacy decision), and opt-in math/diagram rendering.
 
@@ -66,3 +66,12 @@ Frontend selection and refresh counters reject stale results, including after Cl
 SlayDown 0.2.0 was previously Folio. The executable is now `slaydown`, but the host identifier remains `dev.mdquickviewer.folio` and the extension identifier remains `dev.mdquickviewer.folio.QuickLook`. The `folio:settings` storage key, `folio` default-style ID, `folio-` heading IDs, `FolioRenderer` JavaScript namespace, and `FolioQuickLook` Swift module are intentionally stable. This preserves preferences, document fragments, and OS associations instead of treating the rename as a different app. Existing `FOLIO_*` build overrides remain supported.
 
 The desktop stylesheet bundles Metal Mania for the brand and Omarchy for the optional Omarchy heading preset. Vite emits local font assets; no remote font service or system font installation is required. Font licenses ship under `public/licenses/`. Quick Look retains the default system-font reader and does not load these app-only faces.
+
+
+## Linux and Windows Space-bar adapters (0.3.0)
+
+`src/preview.ts` builds to a self-contained offline HTML page using the existing renderer, reader styles, tint function, and style catalog. Rust embeds it and exposes a narrow CLI before GUI/single-instance startup: `--preview-html`, `--preview-image`, `--preview-appearance`, and `--preview-save` (JSON on stdin). Each document operation uses its own `DocumentStore`; it cannot replace or authorize access to the full reader's document. Markdown remains untrusted text and all document/image bounds still apply.
+
+`appearance.json` in the stable application config directory is shared by the reader and adapters. The full reader migrates `folio:settings` only if the native file does not exist. Fresh Omarchy is detected through its installed data directory or `OMARCHY_PATH`; an existing selection always wins. Writes are validated and atomic. Open surfaces poll for settings changes every two seconds with in-flight/user-change guards; save failures are visible.
+
+Sushi loads a per-user GTK3 or GTK4 adapter according to its installed version. Windows uses a separately packaged QuickLook plugin and WebView2. Both adapters only expose fixed appearance, current-document image/open, and dismiss messages; neither evaluates document-derived shell commands. Their GPL licensing is isolated from the MIT app via the CLI/message boundary. See `preview/README.md` for installation, limits, and acceptance checks. macOS Quick Look remains independent of this preference store.

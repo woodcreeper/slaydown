@@ -28,21 +28,21 @@ Open a Markdown file and get straight to the words. SlayDown keeps your source u
 - **Easy navigation:** a heading outline, document search, and a read-only source view.
 - **One file at a time:** opening another file replaces the current preview. Close it with the × beside its name or **⌘W / Ctrl+W**, and SlayDown stays ready for the next file.
 - **Markdown essentials:** tables, highlighted code, task lists, footnotes, and local raster images.
-- **Mac Quick Look:** an included native extension for Finder’s Space-bar preview.
+- **Space-bar preview:** a bundled Mac Quick Look extension, plus optional Sushi (Linux) and QuickLook (Windows) adapters.
 - **Local by design:** no accounts, uploads, or analytics. Built with Tauri and platform webviews.
 
 ## Install
 
 **SlayDown is an early preview.** Get packages from the [Releases page](https://github.com/woodcreeper/slaydown/releases). The release workflow produces the following files after all platform builds and automated tests pass. If a release is still building, you can [build from source](docs/DEVELOPMENT.md).
 
-**[Download SlayDown 0.2.0](https://github.com/woodcreeper/slaydown/releases/tag/v0.2.0)** — the current preview includes the SlayDown name, custom tint, Close Document, and the Omarchy reading style. Older v0.1.0 downloads retain the Folio name.
+**[Download SlayDown 0.3.0](https://github.com/woodcreeper/slaydown/releases/tag/v0.3.0)** — the current preview adds Space-bar adapters for Omarchy/Linux and Windows, with shared appearance settings. Older v0.1.0 downloads retain the Folio name.
 
 | Computer | Download | Requirements |
 | --- | --- | --- |
-| Mac — Apple Silicon or Intel | [SlayDown-macOS-universal.zip](https://github.com/woodcreeper/slaydown/releases/download/v0.2.0/SlayDown-macOS-universal.zip) | macOS 12 or later |
-| Windows PC — x64 | [SlayDown_0.2.0_x64-setup.exe](https://github.com/woodcreeper/slaydown/releases/download/v0.2.0/SlayDown_0.2.0_x64-setup.exe) | Windows 10 or 11; WebView2 |
-| Ubuntu / Debian — x64 | [SlayDown_0.2.0_amd64.deb](https://github.com/woodcreeper/slaydown/releases/download/v0.2.0/SlayDown_0.2.0_amd64.deb) | Ubuntu 22.04+ or a compatible Debian-based desktop with WebKitGTK 4.1 |
-| Other Linux desktops — x64 | [SlayDown_0.2.0_amd64.AppImage](https://github.com/woodcreeper/slaydown/releases/download/v0.2.0/SlayDown_0.2.0_amd64.AppImage) | A compatible glibc-based desktop; see Linux notes below |
+| Mac — Apple Silicon or Intel | [SlayDown-macOS-universal.zip](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown-macOS-universal.zip) | macOS 12 or later |
+| Windows PC — x64 | [SlayDown_0.3.0_x64-setup.exe](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown_0.3.0_x64-setup.exe) | Windows 10 or 11; WebView2 |
+| Ubuntu / Debian — x64 | [SlayDown_0.3.0_amd64.deb](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown_0.3.0_amd64.deb) | Ubuntu 22.04+ or a compatible Debian-based desktop with WebKitGTK 4.1 |
+| Other Linux desktops — x64 | [SlayDown_0.3.0_amd64.AppImage](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown_0.3.0_amd64.AppImage) | A compatible glibc-based desktop; see Linux notes below |
 
 Filenames may vary slightly; choose the matching extension in the release assets. Preview builds are **not Developer ID-signed/notarized on Mac or publisher-signed on Windows**. Mac bundles are signed ad hoc for bundle integrity. Operating systems may show security warnings. Managed computers may require administrator approval. Checksums are included as `SHA256SUMS.txt`.
 
@@ -69,6 +69,8 @@ Finder’s Space-bar preview, double-clicking into SlayDown, and opening the sam
 2. Follow the installer. It can install Microsoft Edge WebView2 if the runtime is missing; that step needs an internet connection.
 3. Open **SlayDown** from Start, then press **Ctrl+O** or drag in a Markdown file.
 
+**Space-bar preview:** install the separate QuickLook companion, then the `SlayDown-QuickLook.qlplugin` release asset. Select the plugin in Explorer, press Space, install it, and restart QuickLook. [Full preview setup](preview/README.md#windows-file-explorer--quicklook).
+
 An unsigned preview may trigger SmartScreen. Check that the file came from this repository’s release; if you trust it and Windows offers the option, choose **More info → Run anyway**. Some Windows 11 configurations with Smart App Control may block unsigned previews altogether. See [Microsoft’s SmartScreen guidance](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation).
 
 To use SlayDown for double-clicks, right-click a `.md` file, choose **Open with → Choose another app**, and select SlayDown as the default. Windows ARM64 packages are not currently provided.
@@ -78,7 +80,7 @@ To use SlayDown for double-clicks, right-click a `.md` file, choose **Open with 
 On Ubuntu or Debian, download the `.deb`, then run the following from its download folder (substitute the actual filename):
 
 ```sh
-sudo apt install ./SlayDown_0.2.0_amd64.deb
+sudo apt install ./SlayDown_0.3.0_amd64.deb
 ```
 
 This installs the package and resolves its system dependencies. Launch SlayDown from your application menu.
@@ -86,21 +88,21 @@ This installs the package and resolves its system dependencies. Launch SlayDown 
 For an AppImage, download the `.AppImage`, then make it executable and run it:
 
 ```sh
-chmod +x SlayDown_0.2.0_amd64.AppImage
-./SlayDown_0.2.0_amd64.AppImage
+chmod +x SlayDown_0.3.0_amd64.AppImage
+./SlayDown_0.3.0_amd64.AppImage
 ```
 
-AppImages are built on Ubuntu 22.04 and are not guaranteed to work on every distribution. If FUSE is unavailable, try `./SlayDown_0.2.0_amd64.AppImage --appimage-extract-and-run`. See [Tauri’s AppImage compatibility notes](https://v2.tauri.app/distribute/appimage/). Linux ARM64 packages are not currently provided.
+AppImages are built on Ubuntu 22.04 and are not guaranteed to work on every distribution. If FUSE is unavailable, try `./SlayDown_0.3.0_amd64.AppImage --appimage-extract-and-run`. See [Tauri’s AppImage compatibility notes](https://v2.tauri.app/distribute/appimage/). Linux ARM64 packages are not currently provided.
 
-Use your file manager’s **Open With** settings to associate Markdown with SlayDown. The `.deb` installs a desktop entry; a standalone AppImage may need manual desktop integration. Finder-style Space-bar preview is a macOS feature only.
+Use your file manager’s **Open With** settings to associate Markdown with SlayDown. The `.deb` installs a desktop entry; a standalone AppImage may need manual desktop integration. For Space-bar previews in Nautilus/Files, install the `SlayDown-Sushi.tar.gz` adapter from the release. [Preview setup and troubleshooting](preview/README.md#omarchy--linux-nautilus--sushi).
 
 ### Omarchy / Arch Linux
 
-The app (then named Folio) has been confirmed working on **Omarchy 4.0.4-1, x86_64**, through a user test on a physical machine on September 18, 2026. An [experimental native Arch package and Wayland check](packaging/arch/README.md) are also saved in this repository; that packaging path has not been separately verified. An Omarchy plugin is still under consideration.
+The app (then named Folio) has been confirmed working on **Omarchy 4.0.4-1, x86_64**, through a user test on a physical machine on September 18, 2026. An [experimental native Arch package and Wayland check](packaging/arch/README.md) are also saved in this repository; that packaging path has not been separately verified. The 0.3.0 Sushi adapter adds Markdown previews to Files’ existing Space-bar workflow. Install it separately using the [preview instructions](preview/README.md#omarchy--linux-nautilus--sushi), then log out/back in. Fresh Omarchy installations default to Omarchy headings; existing preferences are preserved. This is a community Sushi adapter, not an official Omarchy shell plugin.
 
 ## Make it yours
 
-Open **Appearance** (the **Aa** button) to choose a reading style, theme, tint, or text size. Under **Tint**, pick a swatch or click **Custom color** to open your system’s color picker. Changes preview immediately and are remembered. **Neutral** restores the selected style’s original palette. Tint affects accents and adds a subtle wash to the page; it leaves your Markdown unchanged. These preferences apply to the app; Quick Look uses the neutral SlayDown default.
+Open **Appearance** (the **Aa** button) to choose a reading style, theme, tint, or text size. Under **Tint**, pick a swatch or click **Custom color** to open your system’s color picker. Changes preview immediately and are remembered. **Neutral** restores the selected style’s original palette. Tint affects accents and adds a subtle wash to the page; it leaves your Markdown unchanged. Linux/Windows previews share these preferences with the full app. Open SlayDown once after upgrading to migrate older settings. Mac Quick Look still uses the neutral SlayDown default.
 
 **Omarchy** uses [Mark Cuda’s Omarchy Font](https://github.com/markcuda/Omarchy-Font) for block-letter headings, paired with monospaced body text. SlayDown’s wordmark uses Metal Mania. Both fonts are bundled locally and work offline; see [font credits and licenses](docs/FONTS.md).
 
@@ -143,4 +145,4 @@ Install a current Node.js 22 or 24 LTS release, Rust, and the platform dependenc
 
 Built with [Tauri](https://tauri.app/), [markdown-it](https://github.com/markdown-it/markdown-it), [highlight.js](https://highlightjs.org/), TypeScript, and Swift. Reading styles take inspiration from [VS Code](https://github.com/microsoft/vscode/blob/main/extensions/markdown-language-features/media/markdown.css), [iA Writer Classic](https://ia.net/writer/support/preview/templates), and [GitHub Primer](https://github.com/primer/css/tree/main/src/markdown).
 
-[MIT licensed](LICENSE). © 2026 David La Puma. Dependencies retain their respective licenses.
+[MIT licensed](LICENSE); optional preview adapters are [GPL-3.0-or-later](preview/LICENSE). © 2026 David La Puma. Dependencies retain their respective licenses.

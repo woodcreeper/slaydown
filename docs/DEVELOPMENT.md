@@ -86,7 +86,9 @@ The [Build and release workflow](../.github/workflows/build.yml) tests and build
 
 1. Keep the version in `package.json`, `package-lock.json`, `src-tauri/Cargo.toml`, `src-tauri/Cargo.lock`, `src-tauri/tauri.conf.json`, and the Quick Look `Info.plist` consistent.
 2. Move the relevant changelog entries under the new version and update [release notes](RELEASE_NOTES.md), then commit and push to `main`. Use a new version; existing releases are immutable.
-3. Run the workflow manually on `main`, entering the version (such as `0.2.0`). Leave it blank for a build without publishing.
-4. After every platform succeeds, the workflow validates versions, gathers four packages, computes SHA-256 checksums, and creates a prerelease/tag at the exact built commit. It refuses to overwrite an existing release.
+3. Run the workflow manually on `main`, entering the version (such as `0.3.0`). Leave it blank for a build without publishing.
+4. After every platform succeeds, the workflow validates versions, gathers four app packages and both preview adapters, computes SHA-256 checksums, and creates a prerelease/tag at the exact built commit. It refuses to overwrite an existing release.
 
 No signing credentials are stored in the repository. The current Mac and Windows packages are preview builds without trusted publisher signatures. The workflow pins its third-party actions to commit hashes; review those pins when updating build infrastructure.
+
+Linux/Windows Space-bar adapters have separate host dependencies and packaging steps; see [preview development and setup](../preview/README.md). Run `npm run build` before native CLI/tests so the embedded standalone preview page exists.
