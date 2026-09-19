@@ -9,13 +9,16 @@ mkdir -p "$root/test-results"
 fixture="$XDG_DATA_HOME/Unicode notes Ω with spaces.md"
 printf '# SlayDown preview smoke test\n\nRendered **Markdown**, offline.\n' > "$fixture"
 bash build/SlayDown-Sushi/install.sh "$root/src-tauri/target/release/slaydown"
-# URI encoding must not split filenames or turn document text into a command.
-uri=$(python3 -c 'import pathlib,sys; print(pathlib.Path(sys.argv[1]).as_uri())' "$fixture")
-G_MESSAGES_DEBUG=all sushi "$fixture" > "$logfile" 2>&1 &
+service=$(awk -F= '/^Exec=/{print $2}' /usr/share/dbus-1/services/org.gnome.NautilusPreviewer.service)
+[[ -x "$service" ]]
+SUSHI_PERSIST=1 G_MESSAGES_DEBUG=all "$service" > "$logfile" 2>&1 &
 pid=$!
 trap 'kill "$pid" 2>/dev/null || true' EXIT
+gdbus wait --session --timeout 10 org.gnome.NautilusPreviewer
+sushi "$fixture"
 for attempt in {1..40}; do
   if rg -q 'SlayDown preview rendered' "$logfile"; then
+    scrot "$root/test-results/sushi.png"
     gdbus call --session --dest org.gnome.NautilusPreviewer --object-path /org/gnome/NautilusPreviewer --method org.gnome.NautilusPreviewer2.Close
     echo 'Sushi loaded the plugin and its shared JavaScript renderer.'
     exit 0

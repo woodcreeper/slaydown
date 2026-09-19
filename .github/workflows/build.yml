@@ -107,7 +107,7 @@ jobs:
       - name: Install reader and preview dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep
+          sudo apt-get install -y gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep scrot
           sudo apt-get install -y ./artifacts/*.deb
           mkdir -p src-tauri/target/release
           ln -s /usr/bin/slaydown src-tauri/target/release/slaydown
@@ -119,7 +119,7 @@ jobs:
         if: always()
         with:
           name: SlayDown-Sushi-diagnostics
-          path: test-results/sushi.log
+          path: test-results/sushi.*
   release:
     needs: [build, sushi]
     if: github.event_name == 'workflow_dispatch' && inputs.version != '' && github.ref == 'refs/heads/main'
