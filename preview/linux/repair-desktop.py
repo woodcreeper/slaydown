@@ -32,13 +32,15 @@ def find_binary(data):
 
 def exec_quote(path):
     # Desktop Entry Exec has two escaping layers: string values, then argv.
-    if any(c in path for c in "\n\r\t="):
-        raise ValueError("Move SlayDown to a path without tabs, newlines, or '=' and rerun.")
+    if any(c in path for c in "\n\r\t"):
+        raise ValueError("Move SlayDown to a path without tabs or newlines and rerun.")
     quoted = ''.join('\\' + c if c in '\\"`$' else c for c in path)
     return '"' + quoted.replace('\\', '\\\\').replace('%', '%%') + '"'
 
 
 def repair(binary, data):
+    if not os.access("/usr/bin/env", os.X_OK):
+        raise ValueError("The standard /usr/bin/env executable is required.")
     for command in ("gio", "gjs", "update-desktop-database"):
         if not shutil.which(command):
             raise ValueError(f"Missing {command}. On Omarchy install: sudo pacman -S --needed nautilus gjs desktop-file-utils")
@@ -61,7 +63,10 @@ def repair(binary, data):
     desktop.write_text(
         "[Desktop Entry]\nType=Application\nName=SlayDown\n"
         "Comment=A beautiful, lightweight Markdown reader\n"
-        f"Exec={command} %f\n"
+        # GIO checks argv[0] exists before expanding %% field escapes. Using
+        # env keeps percent signs in AppImage paths in an argument, where GIO
+        # expands them correctly. No shell is involved; -- ends env options.
+        f"Exec=/usr/bin/env -- {command} %f\n"
         "Icon=slaydown\nTerminal=false\nCategories=Office;\n"
         "StartupWMClass=slaydown\nMimeType=text/markdown;text/x-markdown;\n",
         encoding="utf-8",

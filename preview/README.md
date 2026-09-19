@@ -13,7 +13,7 @@ The Linux and Windows adapters use SlayDown's installed renderer, bundled fonts,
 
 Choose **Appearance** in the preview to change style, theme, tint, or size. On a fresh Omarchy install the default is **Omarchy**, with its bundled heading font, system theme, and neutral tint. Existing choices are preserved. Changes appear in another open preview or full reader within two seconds, and persist across restarts. Preview content is a snapshot; close/reopen after editing. The full reader retains its automatic file refresh.
 
-The installer writes only `~/.local/share/sushi/viewers/slaydown.js` (Sushi 46–50) or `~/.local/share/sushi/plugins-1/slaydown.js` (51+), respecting `XDG_DATA_HOME`. No root access, global keyboard hook, or replacement D-Bus service is needed. Remove the adapter with `bash SlayDown-Sushi/install.sh --uninstall`, then log out/back in.
+By default, the installer writes only `~/.local/share/sushi/viewers/slaydown.js` (Sushi 46–50) or `~/.local/share/sushi/plugins-1/slaydown.js` (51+), respecting `XDG_DATA_HOME`. No root access, global keyboard hook, or replacement D-Bus service is needed. Remove the adapter with `bash SlayDown-Sushi/install.sh --uninstall`, then log out/back in.
 
 ### If Sushi says “Open With Folio”
 
