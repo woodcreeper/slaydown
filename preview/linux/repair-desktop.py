@@ -52,7 +52,7 @@ def repair(binary, data):
     # Verify the preview CLI before changing any application registration.
     result = subprocess.run([binary, "--preview-appearance"], check=True, capture_output=True, text=True)
     appearance = json.loads(result.stdout)
-    if not isinstance(appearance, dict) or "style" not in appearance:
+    if not isinstance(appearance, dict) or "readingStyle" not in appearance:
         raise ValueError("This executable did not return SlayDown appearance settings.")
     applications = data / "applications"
     applications.mkdir(parents=True, exist_ok=True)

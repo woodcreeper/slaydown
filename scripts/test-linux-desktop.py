@@ -32,7 +32,7 @@ class DesktopRepairTests(unittest.TestCase):
 import json, sys
 from pathlib import Path
 if sys.argv[1:] == ['--preview-appearance']:
-    print('{{"style":"omarchy"}}')
+    print('{{"readingStyle":"omarchy"}}')
 else:
     Path({str(self.output)!r}).write_text(json.dumps(sys.argv[1:]))
 ''')
