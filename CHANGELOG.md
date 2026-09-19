@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Added a Linux desktop-registration repair for stale Folio Markdown defaults, including AppImage installations. It discovers the working Sushi executable, registers SlayDown with filename forwarding, and verifies the default through GIO. Plain-text associations and installed apps are preserved.
+- Added an explicit `--set-default` option to newly built Sushi installer bundles. Existing v0.3.0 users can download the standalone repair helper from the preview guide.
+- Corrected Omarchy setup instructions: Sushi may require separate installation. Missing Sushi now produces an actionable installation message.
+
 ## 0.3.0 — 2026-09-19
 
 - Added optional Space-bar Markdown adapters for Nautilus/Sushi on Omarchy/Linux and QuickLook on Windows. The Windows workflow requires the separate QuickLook companion.
@@ -8,7 +14,7 @@
 - Added install/uninstall instructions, version-aware Sushi 46–50 / 51+ adapters, and reproducible Windows plugin packaging.
 - Preview processes keep their document authorization separate from the full reader and never modify Markdown files. Mac Quick Look behavior is unchanged.
 
-Physical Omarchy/Hyprland and Windows Explorer acceptance is still pending; see the [preview guide](preview/README.md).
+Space-bar preview was confirmed working on physical Omarchy after installing Sushi on September 19, 2026. A stale Folio default application was reported separately; see the [preview guide](preview/README.md). Windows Explorer acceptance is still pending.
 
 ## 0.2.0 — 2026-09-19
 

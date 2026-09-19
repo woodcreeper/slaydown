@@ -94,7 +94,7 @@ chmod +x SlayDown_0.3.0_amd64.AppImage
 
 AppImages are built on Ubuntu 22.04 and are not guaranteed to work on every distribution. If FUSE is unavailable, try `./SlayDown_0.3.0_amd64.AppImage --appimage-extract-and-run`. See [Tauri’s AppImage compatibility notes](https://v2.tauri.app/distribute/appimage/). Linux ARM64 packages are not currently provided.
 
-Use your file manager’s **Open With** settings to associate Markdown with SlayDown. The `.deb` installs a desktop entry; a standalone AppImage may need manual desktop integration. For Space-bar previews in Nautilus/Files, install the `SlayDown-Sushi.tar.gz` adapter from the release. [Preview setup and troubleshooting](preview/README.md#omarchy--linux-nautilus--sushi).
+Use your file manager’s **Open With** settings to associate Markdown with SlayDown. The `.deb` installs a desktop entry; a standalone AppImage needs desktop integration. If Sushi still says **Open With Folio**, use the [Markdown association repair](preview/README.md#if-sushi-says-open-with-folio). For Space-bar previews in Nautilus/Files, install Sushi itself and the `SlayDown-Sushi.tar.gz` adapter from the release. [Preview setup and troubleshooting](preview/README.md#omarchy--linux-nautilus--sushi).
 
 ### Omarchy / Arch Linux
 
