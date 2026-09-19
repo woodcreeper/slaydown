@@ -11,11 +11,11 @@ if (!/^\d+\.\d+\.\d+$/.test(version ?? '') || version !== pkg.version || version
 function collect(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
     const path = join(dir, entry.name);
-    return entry.isDirectory() ? collect(path) : /\.(zip|exe|deb|AppImage)$/.test(entry.name) ? [path] : [];
+    return entry.isDirectory() ? collect(path) : /\.(zip|exe|deb|AppImage|qlplugin|tar\.gz)$/.test(entry.name) ? [path] : [];
   });
 }
 const assets = collect('artifacts').sort();
-for (const extension of ['.zip', '.exe', '.deb', '.AppImage']) {
+for (const extension of ['.zip', '.exe', '.deb', '.AppImage', '.qlplugin', '.tar.gz']) {
   if (assets.filter(path => path.endsWith(extension)).length !== 1) throw new Error(`Expected one ${extension} package.`);
 }
 mkdirSync('release-assets', { recursive: true });

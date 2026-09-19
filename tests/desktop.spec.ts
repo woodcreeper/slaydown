@@ -11,6 +11,7 @@ async function mockDesktop(page: Page) {
     host.testHost = {
       doc: { name: 'notes.md', path: '/documents/notes.md', content },
       editor: null,
+      appearance: null,
       cancelPicker: false,
       reloadFailures: 0,
       reloadDelay: 0,
@@ -29,6 +30,11 @@ async function mockDesktop(page: Page) {
           listeners.set(args.event, [...(listeners.get(args.event) || []), args.handler]);
           return args.handler;
         }
+        if (command === 'get_appearance') {
+          if (!host.testHost.appearance) host.testHost.appearance = args.legacy || { theme: 'system', readingStyle: 'omarchy', tint: null, fontSize: 17 };
+          return { ...host.testHost.appearance };
+        }
+        if (command === 'set_appearance') { host.testHost.appearance = { ...args.settings }; return null; }
         if (command === 'get_initial_document') return { ...host.testHost.doc };
         if (command === 'get_editor') return host.testHost.editor;
         if (command === 'choose_editor') {
@@ -181,4 +187,22 @@ test('late images do not undo an explicit outline navigation after refresh', asy
   await expect(page.locator('#reader img')).toHaveCount(1);
   await expect.poll(() => page.locator('#folio-section-25').evaluate(element => element.getBoundingClientRect().top)).toBeLessThan(200);
   expect(await page.locator('#folio-section-10').evaluate(element => element.getBoundingClientRect().top)).toBeLessThan(-500);
+});
+
+
+test('native appearance migrates an existing choice and synchronizes preview changes without a reload', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('folio:settings', JSON.stringify({ theme: 'dark', readingStyle: 'writer', tint: '#b96683', fontSize: 21 })));
+  await mockDesktop(page);
+  await expect(page.locator('html')).toHaveAttribute('data-reading-style', 'writer');
+  expect(await page.evaluate(() => (window as any).testHost.appearance)).toEqual({ theme: 'dark', readingStyle: 'writer', tint: '#b96683', fontSize: 21 });
+  await page.evaluate(() => {
+    (window as any).testHost.appearance = { theme: 'light', readingStyle: 'github', tint: '#5776c8', fontSize: 19 };
+    window.dispatchEvent(new Event('focus'));
+  });
+  await expect(page.locator('html')).toHaveAttribute('data-reading-style', 'github');
+  await page.getByRole('button', { name: 'Appearance settings' }).click();
+  await expect(page.locator('#font-size')).toHaveText('19');
+  await page.locator('[data-reading-style-option="code"]').click();
+  await expect.poll(() => page.evaluate(() => (window as any).testHost.appearance.readingStyle)).toBe('code');
+  await expect(page.locator('#filename')).toHaveText('notes.md');
 });

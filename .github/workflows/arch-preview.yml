@@ -6,11 +6,17 @@ on:
         description: 'Successful Build and release run containing the SlayDown-Linux artifact'
         required: true
         type: string
+      sushi_only:
+        description: 'Only test the Sushi adapter against the selected build; skip experimental Arch packaging'
+        required: false
+        default: false
+        type: boolean
 permissions:
   contents: read
   actions: read
 jobs:
   arch:
+    if: ${{ !inputs.sushi_only }}
     name: Arch package and Wayland startup
     runs-on: ubuntu-latest
     container:
@@ -53,3 +59,8 @@ jobs:
         with:
           name: arch-wayland-diagnostics
           path: test-results/arch-wayland.log
+  sushi:
+    if: ${{ inputs.sushi_only }}
+    uses: ./.github/workflows/sushi-check.yml
+    with:
+      build_run_id: ${{ inputs.build_run_id }}

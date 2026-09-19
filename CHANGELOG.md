@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-09-19
+
+- Added optional Space-bar Markdown adapters for Nautilus/Sushi on Omarchy/Linux and QuickLook on Windows. The Windows workflow requires the separate QuickLook companion.
+- Preview uses the same Markdown renderer, five reading styles, bundled fonts, local-image validation, and appearance preferences as the full reader. Space/Escape dismisses it; Open in SlayDown opens the same file in the full reader.
+- Added a validated, atomic native appearance store, migration of existing webview choices, and synchronization between open reader/preview surfaces. Fresh Omarchy installs default to Omarchy headings without changing an existing selection.
+- Added install/uninstall instructions, version-aware Sushi 46–50 / 51+ adapters, and reproducible Windows plugin packaging.
+- Preview processes keep their document authorization separate from the full reader and never modify Markdown files. Mac Quick Look behavior is unchanged.
+
+Physical Omarchy/Hyprland and Windows Explorer acceptance is still pending; see the [preview guide](preview/README.md).
+
 ## 0.2.0 — 2026-09-19
 
 Published packages: [SlayDown 0.2.0 preview](https://github.com/woodcreeper/slaydown/releases/tag/v0.2.0) — universal Mac ZIP, Windows x64 installer, Linux x64 DEB/AppImage, and SHA-256 checksums. Built from commit `6fa13cf` in [successful build 35441130888](https://github.com/woodcreeper/slaydown/actions/runs/35441130888).

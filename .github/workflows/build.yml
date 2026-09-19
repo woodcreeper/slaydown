@@ -63,10 +63,24 @@ jobs:
             sleep 1
           done
           npm run test:ui
+      - name: Build Windows Space-bar adapter
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/build-windows-preview.ps1
+      - name: Package Linux Space-bar adapter
+        if: runner.os == 'Linux'
+        run: |
+          node scripts/build-linux-preview.mjs
+          mkdir -p release-assets
+          tar -czf release-assets/SlayDown-Sushi.tar.gz -C build SlayDown-Sushi
       - name: Build packages
         run: npm run desktop:build -- ${{ matrix.args }}
         env:
           NO_STRIP: 'true'
+      - name: Test installed native preview CLI
+        if: runner.os != 'macOS'
+        shell: bash
+        run: node scripts/test-preview-cli.mjs src-tauri/target/release/slaydown${{ runner.os == 'Windows' && '.exe' || '' }}
       - name: Package universal Mac app
         if: runner.os == 'macOS'
         run: |
@@ -79,11 +93,22 @@ jobs:
           if-no-files-found: error
           path: |
             release-assets/*.zip
+            release-assets/*.qlplugin
+            release-assets/*.tar.gz
             src-tauri/target/release/bundle/nsis/*-setup.exe
             src-tauri/target/release/bundle/deb/*.deb
             src-tauri/target/release/bundle/appimage/*.AppImage
-  release:
+  sushi:
+    name: Sushi Space-bar integration
     needs: build
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/sushi-check.yml
+    with:
+      build_run_id: ${{ github.run_id }}
+  release:
+    needs: [build, sushi]
     if: github.event_name == 'workflow_dispatch' && inputs.version != '' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

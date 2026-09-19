@@ -19,3 +19,7 @@ artifacts/
 *.pfx
 *.pem
 *.key
+
+dist-preview/
+preview/windows/bin/
+preview/windows/obj/

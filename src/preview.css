@@ -1,0 +1,14 @@
+html,body { height:100%; margin:0; overflow:hidden; background:var(--reader-paper); color:var(--reader-text); }
+body { display:flex; flex-direction:column; font-family:system-ui,sans-serif; }
+.preview-bar { display:flex; align-items:center; gap:16px; padding:14px 20px; border-bottom:1px solid var(--reader-rule); flex-shrink:0; }
+.preview-bar strong { font:26px 'Metal Mania',serif; }
+#preview-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }
+.preview-bar button,#preview-settings button,#preview-settings select,#preview-settings input { font:inherit; color:inherit; background:var(--reader-code); border:1px solid var(--reader-rule); border-radius:6px; padding:7px; }
+#preview-settings { display:flex; align-items:end; gap:12px; flex-wrap:wrap; padding:14px 20px; border-bottom:1px solid var(--reader-rule); }
+#preview-settings[hidden] { display:none; }
+#preview-settings label { display:flex; flex-direction:column; gap:6px; font-size:12px; }
+#size { width:60px; } #tint { height:34px; padding:2px!important; }
+#preview-scroll { overflow:auto; flex:1; min-height:0; }
+#reader { max-width:var(--reader-max-width); margin:0 auto; padding:32px 40px 60px; font-size:var(--reading-size,17px); }
+#preview-status { margin:0; padding:0 20px; font-size:13px; } #preview-status:not(:empty) { padding:10px 20px; }
+@media(max-width:620px) { .preview-bar { gap:8px; padding:10px; } #preview-name { display:none; } #reader { padding:24px; } }
