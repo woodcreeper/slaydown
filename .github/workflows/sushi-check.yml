@@ -36,7 +36,7 @@ jobs:
       - name: Allow WebKit sandbox namespaces in this disposable runner
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - name: Render Markdown through the actual Sushi host
-        run: xvfb-run -a dbus-run-session -- bash scripts/test-sushi.sh
+        run: xvfb-run -a -s "-screen 0 1600x1200x24" dbus-run-session -- bash scripts/test-sushi.sh
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

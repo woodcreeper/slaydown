@@ -11,6 +11,7 @@ export const Klass = class SlayDownRenderer extends WebKit.WebView {
     constructor(file, _info, properties = {}) {
         const manager = new WebKit.UserContentManager();
         super({ ...properties, user_content_manager: manager });
+        this.markInitialized();
         this._dispose = startBridge(this, manager, file, () => this.markReady(), error => {
             this.markFailed(new GLib.Error(Gio.io_error_quark(), Gio.IOErrorEnum.FAILED, error.message));
         }, () => this.get_root().close(), true);

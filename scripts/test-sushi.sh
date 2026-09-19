@@ -18,6 +18,7 @@ gdbus wait --session --timeout 10 org.gnome.NautilusPreviewer
 sushi "$fixture"
 for attempt in {1..40}; do
   if rg -q 'SlayDown preview rendered' "$logfile"; then
+    sleep 2 # Let the compositor present the completed WebKit frame before capture.
     scrot "$root/test-results/sushi.png"
     gdbus call --session --dest org.gnome.NautilusPreviewer --object-path /org/gnome/NautilusPreviewer --method org.gnome.NautilusPreviewer2.Close
     echo 'Sushi loaded the plugin and its shared JavaScript renderer.'
