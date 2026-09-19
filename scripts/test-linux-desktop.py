@@ -47,7 +47,10 @@ else:
         self.run_command("gio", "mime", "text/plain", "OtherEditor.desktop")
 
     def run_command(self, *argv, check=True):
-        return subprocess.run(argv, env=self.env, check=check, text=True, capture_output=True)
+        result = subprocess.run(argv, env=self.env, text=True, capture_output=True)
+        if check and result.returncode:
+            self.fail(f"{argv!r} exited {result.returncode}\n{result.stdout}\n{result.stderr}")
+        return result
 
     def test_migration_launch_and_idempotence(self):
         script = str(ROOT / "preview/linux/repair-desktop.py")
