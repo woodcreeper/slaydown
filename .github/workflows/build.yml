@@ -77,6 +77,10 @@ jobs:
         run: npm run desktop:build -- ${{ matrix.args }}
         env:
           NO_STRIP: 'true'
+      - name: Test installed native preview CLI
+        if: runner.os != 'macOS'
+        shell: bash
+        run: node scripts/test-preview-cli.mjs src-tauri/target/release/slaydown${{ runner.os == 'Windows' && '.exe' || '' }}
       - name: Package universal Mac app
         if: runner.os == 'macOS'
         run: |

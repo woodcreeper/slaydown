@@ -22,7 +22,6 @@ namespace QuickLook.Plugin.SlayDown
         private ContextObject context;
         private string document;
         private string executable;
-        private string temporary;
         private int generation;
         private readonly HashSet<Process> children = new HashSet<Process>();
         private readonly JavaScriptSerializer json = new JavaScriptSerializer { MaxJsonLength = 48 * 1024 * 1024 };
@@ -86,11 +85,10 @@ namespace QuickLook.Plugin.SlayDown
         {
             var html = await Command(new[] { "--preview-html", document });
             if (generation != token) return;
-            // NavigateToString has a 2 MiB limit. A private random temporary file
-            // supports our full 10 MiB document limit and is deleted on Cleanup.
-            temporary = Path.Combine(Path.GetTempPath(), "SlayDown-" + Guid.NewGuid().ToString("N") + ".html");
-            File.WriteAllText(temporary, html, new UTF8Encoding(false));
-            var uri = new Uri(temporary).AbsoluteUri;
+            // Serve from memory to avoid NavigateToString's 2 MiB ceiling and
+            // avoid writing a document copy into the user's temporary folder.
+            var uri = "https://preview.slaydown.invalid/" + Guid.NewGuid().ToString("N") + "/";
+            var bytes = Encoding.UTF8.GetBytes(html);
             var view = new WebView2 { CreationProperties = new CoreWebView2CreationProperties { UserDataFolder = Path.Combine(SettingsDirectory, "WebView2") } };
             web = view; context.ViewerContent = view;
             await view.EnsureCoreWebView2Async();
@@ -101,8 +99,9 @@ namespace QuickLook.Plugin.SlayDown
             view.NavigationStarting += (_, e) => { if (e.Uri != uri) e.Cancel = true; };
             view.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
             view.CoreWebView2.WebResourceRequested += (_, e) => {
-                if (e.Request.Uri != uri && !e.Request.Uri.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
-                    e.Response = view.CoreWebView2.Environment.CreateWebResourceResponse(null, 403, "Blocked", "");
+                e.Response = e.Request.Uri == uri
+                    ? view.CoreWebView2.Environment.CreateWebResourceResponse(new MemoryStream(bytes, false), 200, "OK", "Content-Type: text/html; charset=utf-8\r\nCache-Control: no-store")
+                    : view.CoreWebView2.Environment.CreateWebResourceResponse(null, 403, "Blocked", "");
             };
             view.CoreWebView2.WebMessageReceived += async (_, e) => {
                 // Ignore messages from any other origin, including frames.
@@ -177,7 +176,6 @@ namespace QuickLook.Plugin.SlayDown
             generation++;
             foreach (var child in children.ToArray()) { try { if (!child.HasExited) child.Kill(); } catch (Exception) { } }
             web?.Dispose(); web = null;
-            if (temporary != null) { try { File.Delete(temporary); } catch (IOException) { } temporary = null; }
         }
     }
 }
