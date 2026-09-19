@@ -111,12 +111,16 @@ jobs:
       - name: Install reader and preview dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep scrot
-          sudo apt-get install -y ./artifacts/*.deb
+          sudo apt-get install -y --no-install-recommends gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep scrot xauth
+          deb=$(find artifacts -name '*.deb' -print -quit)
+          test -n "$deb"
+          sudo apt-get install -y "./$deb"
           mkdir -p src-tauri/target/release
           ln -s /usr/bin/slaydown src-tauri/target/release/slaydown
           mkdir -p build
-          tar -xzf artifacts/SlayDown-Sushi.tar.gz -C build
+          adapter=$(find artifacts -name 'SlayDown-Sushi.tar.gz' -print -quit)
+          test -n "$adapter"
+          tar -xzf "$adapter" -C build
       - name: Render Markdown through the actual Sushi host
         run: xvfb-run -a dbus-run-session -- bash scripts/test-sushi.sh
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
