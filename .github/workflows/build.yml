@@ -101,33 +101,12 @@ jobs:
   sushi:
     name: Sushi Space-bar integration
     needs: build
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: SlayDown-Linux
-          path: artifacts
-      - name: Install reader and preview dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep scrot xauth
-          deb=$(find artifacts -name '*.deb' -print -quit)
-          test -n "$deb"
-          sudo apt-get install -y "./$deb"
-          mkdir -p src-tauri/target/release
-          ln -s /usr/bin/slaydown src-tauri/target/release/slaydown
-          mkdir -p build
-          adapter=$(find artifacts -name 'SlayDown-Sushi.tar.gz' -print -quit)
-          test -n "$adapter"
-          tar -xzf "$adapter" -C build
-      - name: Render Markdown through the actual Sushi host
-        run: xvfb-run -a dbus-run-session -- bash scripts/test-sushi.sh
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        if: always()
-        with:
-          name: SlayDown-Sushi-diagnostics
-          path: test-results/sushi.*
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/sushi-check.yml
+    with:
+      build_run_id: ${{ github.run_id }}
   release:
     needs: [build, sushi]
     if: github.event_name == 'workflow_dispatch' && inputs.version != '' && github.ref == 'refs/heads/main'
