@@ -5,6 +5,17 @@ function startBridge(view, manager, file, ready, fail, close, modern = false) {
     let alive = true;
     const children = new Set();
     const path = file.get_path();
+    // Sushi already owns the filename and its default-application action.
+    // Keep our Open action only when that native action opens a different app.
+    let opensReader = false;
+    try {
+        const id = file.query_default_handler(null)?.get_id()?.toLowerCase();
+        opensReader = id === 'slaydown.desktop';
+    } catch (_) { /* No default handler: keep the reader action available. */ }
+    manager.add_script(new WebKit.UserScript(
+        `window.slaydownHost = ${JSON.stringify({ kind: 'sushi', opensReader })};`,
+        WebKit.UserContentInjectedFrames.TOP_FRAME,
+        WebKit.UserScriptInjectionTime.START, null, null));
     function command(args, input = null) {
         return new Promise((resolve, reject) => {
             if (!alive) { reject(new Error('Preview closed.')); return; }

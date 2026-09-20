@@ -9,6 +9,7 @@ mkdir -p "$root/test-results"
 fixture="$XDG_DATA_HOME/Unicode notes Ω with spaces.md"
 printf '# SlayDown preview smoke test\n\nRendered **Markdown**, offline.\n' > "$fixture"
 "$root/src-tauri/target/release/slaydown" --linux-integrate --set-default
+printf '{"theme":"dark","readingStyle":"omarchy","tint":"#b96683","fontSize":17}' | "$root/src-tauri/target/release/slaydown" --preview-save
 service=$(awk -F= '/^Exec=/{print $2}' /usr/share/dbus-1/services/org.gnome.NautilusPreviewer.service)
 [[ -x "$service" ]]
 SUSHI_PERSIST=1 G_MESSAGES_DEBUG=all "$service" > "$logfile" 2>&1 &

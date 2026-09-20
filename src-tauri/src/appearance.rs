@@ -115,7 +115,10 @@ pub fn save(dir: &Path, settings: &Appearance) -> Result<(), String> {
     result.map_err(|e| format!("Appearance changed, but could not be saved: {e}"))
 }
 #[tauri::command]
-pub fn get_appearance(legacy: Option<Appearance>) -> Result<Appearance, String> {
+pub fn get_appearance(
+    app: tauri::AppHandle,
+    legacy: Option<Appearance>,
+) -> Result<Appearance, String> {
     let dir = config_dir()?;
     // Only the full reader supplies legacy webview preferences, and only once.
     if !dir.join("appearance.json").exists() {
@@ -123,11 +126,42 @@ pub fn get_appearance(legacy: Option<Appearance>) -> Result<Appearance, String> 
             save(&dir, &settings)?;
         }
     }
-    load(&dir, is_omarchy())
+    let settings = load(&dir, is_omarchy())?;
+    sync_native_theme(&app, &settings)?;
+    Ok(settings)
 }
 #[tauri::command]
-pub fn set_appearance(settings: Appearance) -> Result<(), String> {
-    save(&config_dir()?, &settings)
+pub fn set_appearance(app: tauri::AppHandle, settings: Appearance) -> Result<(), String> {
+    save(&config_dir()?, &settings)?;
+    sync_native_theme(&app, &settings)
+}
+
+pub fn sync_native_theme(_app: &tauri::AppHandle, _settings: &Appearance) -> Result<(), String> {
+    #[cfg(target_os = "linux")]
+    {
+        use gtk::prelude::GtkSettingsExt;
+        let theme = _settings.theme.clone();
+        _app.run_on_main_thread(move || {
+            // The full reader also reads changes saved by Sushi. Only touch GTK
+            // when the preference changes, not on every settings poll.
+            thread_local! {
+                static LAST_THEME: std::cell::RefCell<Option<String>> = const { std::cell::RefCell::new(None) };
+            }
+            LAST_THEME.with(|last| {
+                if last.borrow().as_ref() == Some(&theme) { return; }
+                if let Some(settings) = gtk::Settings::default() {
+                    match theme.as_str() {
+                        "dark" => settings.set_gtk_application_prefer_dark_theme(true),
+                        "light" => settings.set_gtk_application_prefer_dark_theme(false),
+                        // Restore the desktop's preference instead of forcing light.
+                        _ => settings.reset_property("gtk-application-prefer-dark-theme"),
+                    }
+                    *last.borrow_mut() = Some(theme);
+                }
+            });
+        }).map_err(|error| error.to_string())?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]

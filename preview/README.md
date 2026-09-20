@@ -1,6 +1,6 @@
 # Space-bar previews
 
-SlayDown 0.3.1 includes Markdown adapters for **Sushi on Linux** and **QuickLook on Windows**. macOS continues to use the bundled Quick Look extension. These are community integrations, not official Omarchy or Microsoft plugins.
+SlayDown includes Markdown adapters for **Sushi on Linux** and **QuickLook on Windows**. macOS continues to use the bundled Quick Look extension. These are community integrations, not official Omarchy or Microsoft plugins.
 
 The Linux and Windows adapters use SlayDown's installed renderer, bundled fonts, and `appearance.json` settings. They do not start the full reader or replace its open document. Open SlayDown once after upgrading to migrate any older appearance preferences before using the new preview.
 
@@ -17,9 +17,15 @@ The integration writes per-user files under `XDG_DATA_HOME` (normally `~/.local/
 
 Choose **Appearance** in the preview to change style, theme, tint, or size. Fresh Omarchy installs default to **Omarchy**, with its bundled heading font, system theme, and neutral tint. Existing choices are preserved and synchronize between the preview and reader. Preview content is a snapshot; close/reopen after editing. The full reader refreshes automatically.
 
+### Linux appearance and preview toolbar
+
+In 0.3.2, the native reader menu follows the saved light/dark preference; System restores the desktop theme. Sushi already displays the filename and default-app button, so SlayDown uses a compact Appearance toolbar underneath. A separate Open in SlayDown button appears only when Sushi’s native action does not open SlayDown. Windows keeps its own filename and Open button.
+
+After an app upgrade, launch SlayDown once to refresh the bundled adapter, then close previews and log out/back in to reload Sushi. No desktop-theme edits or manual plugin patching are needed.
+
 ### If Sushi says “Open With Folio”
 
-That button uses the Linux default Markdown application. **Upgrade to 0.3.1, quit the old app, and launch the new one once.** SlayDown migrates the old default automatically. Log out/back in to clear any cached Folio process or application label. You do not need a separate repair command.
+That button uses the Linux default Markdown application. **Upgrade to the latest release, quit the old app, and launch the new one once.** SlayDown migrates the old default automatically. Log out/back in to clear any cached Folio process or application label. You do not need a separate repair command.
 
 For older 0.3.0 installations only, the [legacy repair helper](https://raw.githubusercontent.com/woodcreeper/slaydown/v0.3.1/preview/linux/repair-desktop.py) remains available. It is a compatibility tool, not the normal install/upgrade path.
 

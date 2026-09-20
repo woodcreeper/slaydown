@@ -8,6 +8,7 @@ import type { MarkdownDocument } from './platform';
 
 type Request = { id: number; action: string; value?: unknown };
 type Host = Window & {
+  slaydownHost?: { kind: 'sushi'; opensReader: boolean };
   webkit?: { messageHandlers: { slaydown: { postMessage: (value: string) => void } } };
   chrome?: { webview: { postMessage: (value: string) => void } };
   slaydownReply: (id: number, value: unknown, error?: string) => void;
@@ -42,6 +43,11 @@ document.body.insertAdjacentHTML('beforeend', `<header class="preview-bar"><stro
 <label>Size<input id="size" type="number" min="14" max="23" step="1" aria-label="Reading size"></label>
 </section><p id="preview-status" role="status"></p><main id="preview-scroll"><article id="reader" class="markdown-body"></article></main>`);
 $('preview-name').textContent = payload.document.name;
+if (host.slaydownHost?.kind === 'sushi') {
+  document.body.dataset.host = 'sushi';
+  $('preview-name').hidden = true;
+  $('open-reader').hidden = host.slaydownHost.opensReader === true;
+}
 $('reader').innerHTML = renderMarkdown(payload.document.content).html;
 function apply() {
   document.documentElement.dataset.theme = appearance.theme;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2 — 2026-09-20
+
+- Fixed the white strip behind Linux native menus in dark mode. Native menus follow saved light/dark preferences, including changes from Sushi; System restores the desktop preference.
+- Simplified the Sushi preview toolbar: the host owns the filename and its Open action, with compact SlayDown branding and Appearance underneath. When another editor is the default, Open in SlayDown remains available.
+- Added native Linux screenshots and theme-switching regression checks alongside shared-preview browser tests. Windows retains its full preview toolbar.
+
 ## 0.3.1 — 2026-09-20
 
 - Linux app launches now register the current executable and icon, migrate old Folio Markdown defaults, and install/update the bundled Sushi adapter. AppImage paths remain valid beyond temporary mounts and are refreshed after moving/replacing the app.
