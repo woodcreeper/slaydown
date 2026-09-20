@@ -2,7 +2,7 @@
 
 SlayDown was confirmed working on a physical **x86_64 Omarchy 4.0.4-1** machine by the user on September 18, 2026. The installation method was not specified. **The experimental package and workflow in this directory remain unverified and are not part of the published release.**
 
-Omarchy uses Nautilus and Sushi for Space-bar preview. SlayDown 0.3.0 includes a separate, per-user Sushi adapter; use the [preview installation guide](../../preview/README.md). A Quickshell bar/plugin does not intercept Nautilus selection, so no Omarchy shell plugin is needed for this workflow.
+Omarchy uses Nautilus and Sushi for Space-bar preview. SlayDown 0.3.1 installs its bundled per-user adapter when launched; Sushi itself is an optional system dependency; use the [preview installation guide](../../preview/README.md). A Quickshell bar/plugin does not intercept Nautilus selection, so no Omarchy shell plugin is needed for this workflow.
 
 ## Shared preview appearance
 
@@ -18,7 +18,7 @@ The startup check observes a native window and a Wayland buffer. It does not pro
 
 ## Physical acceptance checks
 
-1. Install the updated app and Sushi adapter; log out/back in, then select a Markdown file in Files and press Space.
+1. Quit the old app, install Sushi if missing, and open the updated SlayDown once; log out/back in, then select a Markdown file in Files and press Space.
 2. Run the appearance/restart acceptance above. Confirm other file types still use Sushi's original previews, and previewing another file leaves the full reader document unchanged.
 3. Record the installation method and verify launcher visibility, Markdown associations, HiDPI, editor launch, live refresh in the full reader, and adapter uninstall.
 4. Terminal-only editors still need a terminal wrapper.

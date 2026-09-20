@@ -6,6 +6,10 @@ data="${XDG_DATA_HOME:-$HOME/.local/share}/sushi"
 set_default=false
 if [[ "${1:-}" == --set-default ]]; then set_default=true; shift; fi
 if [[ "${1:-}" == --uninstall ]]; then
+  binary="${2:-$(command -v slaydown || true)}"
+  if [[ -n "$binary" && -x "$binary" ]] && "$binary" --preview-version >/dev/null 2>&1; then
+    exec "$binary" --linux-integrate --disable-preview
+  fi
   rm -f "$data/viewers/slaydown.js" "$data/plugins-1/slaydown.js"
   echo 'Removed SlayDown preview adapters. Log out and back in to restart Sushi.'
   exit 0
@@ -15,6 +19,12 @@ if [[ -z "$binary" || ! -x "$binary" ]]; then
   echo 'Install SlayDown 0.3.0 or later first, or pass the absolute path to its executable/AppImage.' >&2; exit 1
 fi
 binary="$(realpath "$binary")"
+if "$binary" --preview-version >/dev/null 2>&1; then
+  args=(--linux-integrate --enable-preview)
+  if "$set_default"; then args+=(--set-default); fi
+  exec "$binary" "${args[@]}"
+fi
+# Legacy 0.3.0 compatibility only. New installs use the application's lifecycle.
 "$binary" --preview-appearance >/dev/null
 command -v gjs >/dev/null || { echo 'Install gjs and sushi first.' >&2; exit 1; }
 command -v python3 >/dev/null

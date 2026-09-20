@@ -8,7 +8,7 @@ logfile="$root/test-results/sushi.log"
 mkdir -p "$root/test-results"
 fixture="$XDG_DATA_HOME/Unicode notes Ω with spaces.md"
 printf '# SlayDown preview smoke test\n\nRendered **Markdown**, offline.\n' > "$fixture"
-bash build/SlayDown-Sushi/install.sh --set-default "$root/src-tauri/target/release/slaydown"
+"$root/src-tauri/target/release/slaydown" --linux-integrate --set-default
 service=$(awk -F= '/^Exec=/{print $2}' /usr/share/dbus-1/services/org.gnome.NautilusPreviewer.service)
 [[ -x "$service" ]]
 SUSHI_PERSIST=1 G_MESSAGES_DEBUG=all "$service" > "$logfile" 2>&1 &

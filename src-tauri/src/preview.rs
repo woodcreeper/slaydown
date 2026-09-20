@@ -31,6 +31,7 @@ fn page(document: crate::documents::Document, settings: Appearance) -> Result<St
 }
 fn execute(args: &[String]) -> Result<String, String> {
     match args.first().map(String::as_str) {
+        Some("--preview-version") if args.len() == 1 => Ok(env!("CARGO_PKG_VERSION").into()),
         Some("--preview-html") if args.len() == 2 => html(Path::new(&args[1])),
         Some("--preview-appearance") if args.len() == 1 => serde_json::to_string(
             &appearance::load(&appearance::config_dir()?, appearance::is_omarchy())?,

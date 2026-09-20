@@ -94,10 +94,41 @@ $('#app').innerHTML = `
     </main>
   </div>
   <div id="settings" class="settings-popover" hidden><div class="eyebrow">READING STYLE</div><div class="reading-styles">${readingStyles.map(style => `<button data-reading-style-option="${style.id}" aria-pressed="false"><span>${style.name}</span><small>${style.description}</small></button>`).join('')}</div><p class="settings-note">Inspired styles. Your Markdown stays unchanged.</p><div class="settings-divider"></div><div class="eyebrow">APPEARANCE</div><div class="theme-options">${['light','dark','system'].map((t,i) => `<button data-theme-option="${t}" aria-pressed="false">${icon(['sun','moon','monitor'][i])}<span>${t[0].toUpperCase()+t.slice(1)}</span></button>`).join('')}</div><div class="settings-divider"></div><div class="eyebrow">TINT</div><div class="tint-controls"><label class="tint-picker"><input id="tint-picker" type="color" value="#5776c8" aria-label="Custom tint color" /><span>Custom color<output id="tint-value">Neutral</output></span></label><button id="neutral-tint" class="tint-neutral" aria-pressed="true">Neutral</button></div><div class="tint-swatches" role="group" aria-label="Tint presets">${tintSwatches.map(swatch => `<button class="tint-swatch" data-tint="${swatch.color}" style="--swatch:${swatch.color}" aria-label="${swatch.name} tint" title="${swatch.name}" aria-pressed="false"></button>`).join('')}</div><p class="settings-note">Choose a color for accents and a subtle page tint.</p><div class="settings-divider"></div><div class="size-control"><span>Reading size</span><div><button id="smaller" aria-label="Decrease reading size">A−</button><output id="font-size"></output><button id="larger" aria-label="Increase reading size">A+</button></div></div><button id="reset-size" class="reset-button">Reset to default</button><div id="editor-settings" hidden><div class="settings-divider"></div><div class="eyebrow">EXTERNAL EDITOR</div><button id="choose-editor" class="editor-choice"><span id="editor-name">Choose an editor…</span>${icon('open')}</button><p class="settings-note">Save there. SlayDown refreshes here.</p></div></div>
+  <section id="linux-settings" class="linux-settings" hidden aria-label="Linux integration"><div class="eyebrow">LINUX INTEGRATION</div><p id="linux-status" role="status"></p><label><input type="checkbox" id="linux-preview-enabled" /> Space-bar preview in Files</label><pre id="linux-install-command" hidden></pre><div class="linux-actions"><button id="linux-default" class="small-button">Use SlayDown for Markdown</button><button id="linux-retry" class="small-button">Check again</button></div></section>
   <div id="drop-overlay" class="drop-overlay" hidden><div>${icon('open')}<h2>A good place for your words.</h2><p>Drop a Markdown file to start reading.</p></div></div>
   <div id="toast" class="toast" role="status" hidden></div>
   <input id="file-input" type="file" accept=".md,.markdown,.mdown,.mkd,text/markdown" hidden />
 `;
+
+$('#settings').append($('#linux-settings'));
+interface LinuxIntegration { defaultReader: boolean; previewEnabled: boolean; previewReady: boolean; message: string; installCommand: string | null }
+let linuxBusy = false;
+async function setupLinux(makeDefault = false, previewEnabled: boolean | null = null) {
+  if (linuxBusy) return;
+  linuxBusy = true;
+  for (const id of ['linux-default', 'linux-retry', 'linux-preview-enabled']) $("#" + id).toggleAttribute('disabled', true);
+  try {
+    const status = await native<LinuxIntegration | null>('setup_linux_integration', { makeDefault, previewEnabled });
+    if (!status) return;
+    $('#linux-settings').hidden = false;
+    $('#linux-status').textContent = status.message;
+    $<HTMLInputElement>('#linux-preview-enabled').checked = status.previewEnabled;
+    $('#linux-install-command').hidden = !status.installCommand;
+    $('#linux-install-command').textContent = status.installCommand || '';
+    $('#linux-default').hidden = status.defaultReader;
+    if (status.previewEnabled && !status.previewReady) notify('Space-bar preview needs setup. Open Appearance → Linux integration.');
+  } catch (error) {
+    $('#linux-settings').hidden = false;
+    $('#linux-status').textContent = String(error);
+    notify('Linux setup needs attention. Open Appearance → Linux integration.');
+  } finally {
+    linuxBusy = false;
+    for (const id of ['linux-default', 'linux-retry', 'linux-preview-enabled']) $("#" + id).removeAttribute('disabled');
+  }
+}
+$('#linux-default').addEventListener('click', () => { void setupLinux(true); });
+$('#linux-retry').addEventListener('click', () => { void setupLinux(); });
+$('#linux-preview-enabled').addEventListener('change', () => { void setupLinux(false, $<HTMLInputElement>('#linux-preview-enabled').checked); });
 
 function settings(persist = true) {
   scrollIntent++;
@@ -452,4 +483,5 @@ if (isDesktop) void attempt(async () => {
   if (initial && selection === bootSelection) await showDocument(initial); else await syncWatch();
   await attempt(async () => { preferredEditor = await native<EditorInfo | null>('get_editor'); });
   editorReady = true; updateEditor();
+  void setupLinux();
 });

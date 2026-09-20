@@ -1,0 +1,11 @@
+{
+  "bundle": {
+    "resources": { "../build/SlayDown-Sushi/": "linux-preview/" },
+    "linux": {
+      "deb": {
+        "desktopTemplate": "linux.desktop",
+        "recommends": ["gnome-sushi", "gjs", "desktop-file-utils"]
+      }
+    }
+  }
+}
