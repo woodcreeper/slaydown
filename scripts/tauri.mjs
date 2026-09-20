@@ -13,7 +13,6 @@ const cli = resolve(root, 'node_modules/@tauri-apps/cli/tauri.js');
 if (process.platform === 'linux' && ['build', 'dev'].includes(args[0])) {
   const result = spawnSync(process.execPath, ['scripts/build-linux-preview.mjs'], { cwd: root, env, stdio: 'inherit' });
   if (result.status !== 0) process.exit(result.status ?? 1);
-  args.push('--config', 'src-tauri/tauri.linux.conf.json');
 }
 if (args[0] === 'build' && process.platform === 'darwin') {
   for (const command of [[process.execPath, [resolve(root, 'node_modules/vite/bin/vite.js'), 'build', '--config', 'vite.renderer.config.ts']], [process.execPath, ['scripts/copy-reader.mjs']], ['bash', ['scripts/build-quicklook.sh', '--test']]]) {

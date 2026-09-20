@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 1420 --strictPort",
-    "build": "tsc --noEmit && vite build && npm run build:renderer && npm run build:preview",
+    "build": "tsc --noEmit && vite build && npm run build:renderer && npm run build:preview && node scripts/build-linux-preview.mjs",
     "build:renderer": "vite build --config vite.renderer.config.ts && node scripts/copy-reader.mjs",
     "build:quicklook": "npm run build:renderer && bash scripts/build-quicklook.sh",
     "desktop": "node scripts/tauri.mjs dev",

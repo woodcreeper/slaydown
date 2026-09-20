@@ -140,13 +140,9 @@ fn is_ours(app: &gio::AppInfo) -> bool {
     if id == DESKTOP_ID {
         return true;
     }
-    // Require both the legacy desktop ID and display name, rather than taking
+    // Require both a known desktop ID and display name, rather than taking
     // over a different program just because its executable contains "folio".
-    app.display_name() == "Folio"
-        && (id == "Folio.desktop"
-            || id == "folio.desktop"
-            || (id.starts_with("appimagekit_")
-                && (id.ends_with("-Folio.desktop") || id.ends_with("-SlayDown.desktop"))))
+    owned_id(&id) && matches!(app.display_name().as_str(), "Folio" | "SlayDown")
 }
 
 fn owned_id(id: &str) -> bool {
@@ -373,6 +369,10 @@ pub fn setup(
     };
     let major = match sushi_major() {
         Some(major) if major >= 46 => major,
+        Some(major) => {
+            status.message = format!("Sushi {major} is too old for this preview. Sushi 46 or newer is required; upgrade your distribution's Sushi package, then choose Check again.");
+            return Ok(status);
+        }
         _ => {
             status.message =
                 "Space-bar preview needs Sushi 46 or newer. Install it, then choose Check again."
