@@ -60,3 +60,9 @@ Remove the adapter from QuickLook's plugin folder to revert to its built-in Mark
 `npm run build` builds the standalone preview HTML into the native executable. `node scripts/build-linux-preview.mjs` assembles the Sushi adapters. On Windows, `powershell -File scripts/build-windows-preview.ps1` builds the QuickLook package against its pinned release SDK.
 
 Automated checks cover shared preferences, rendering, document isolation, native command validation, both platform builds, and a Linux Sushi runtime smoke test. A user confirmed Space-bar preview works on physical Omarchy after separately installing Sushi (September 19, 2026); the stale Folio association was reported during that test. Windows Explorer acceptance is still required; CI is not proof of every desktop shortcut configuration.
+
+### Linux appearance and preview toolbar
+
+In 0.3.2, the native reader menu follows the saved light/dark preference; System restores the desktop theme. Sushi already displays the filename and default-app button, so SlayDown uses a compact Appearance toolbar underneath. A separate Open in SlayDown button appears only when Sushi’s native action does not open SlayDown. Windows keeps its own filename and Open button.
+
+After an app upgrade, launch SlayDown once to refresh the bundled adapter, then close previews and log out/back in to reload Sushi. No desktop-theme edits or manual plugin patching are needed.

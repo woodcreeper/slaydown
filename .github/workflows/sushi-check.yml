@@ -23,7 +23,7 @@ jobs:
       - name: Install reader and preview dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep scrot xauth desktop-file-utils
+          sudo apt-get install -y --no-install-recommends gnome-sushi gjs gir1.2-webkit2-4.1 xvfb dbus-x11 ripgrep scrot xauth desktop-file-utils xdotool python3-pil
           deb=$(find artifacts -name '*.deb' -print -quit)
           test -n "$deb"
           sudo apt-get install -y "./$deb"
@@ -41,10 +41,15 @@ jobs:
         run: dbus-run-session -- python3 scripts/test-linux-desktop.py
       - name: Verify automatic install and upgrade lifecycle
         run: SLAYDOWN_EXPECT_SUSHI=1 dbus-run-session -- node scripts/test-linux-lifecycle.mjs /usr/bin/slaydown
+      - name: Verify native Linux menus follow the reader theme
+        timeout-minutes: 3
+        run: xvfb-run -a -s "-screen 0 1600x1200x24" dbus-run-session -- bash scripts/test-linux-chrome.sh
       - name: Render Markdown through the actual Sushi host
         run: xvfb-run -a -s "-screen 0 1600x1200x24" dbus-run-session -- bash scripts/test-sushi.sh
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: SlayDown-Sushi-diagnostics
-          path: test-results/sushi.*
+          path: |
+            test-results/sushi.*
+            test-results/linux-*

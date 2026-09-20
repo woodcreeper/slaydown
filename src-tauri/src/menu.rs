@@ -4,6 +4,11 @@ use tauri::{
 };
 
 pub fn install(app: &AppHandle) -> tauri::Result<()> {
+    if let Ok(settings) = crate::appearance::config_dir()
+        .and_then(|dir| crate::appearance::load(&dir, crate::appearance::is_omarchy()))
+    {
+        let _ = crate::appearance::sync_native_theme(app, &settings);
+    }
     // Own the document shortcuts: the default macOS menu maps Cmd+W to
     // closing the whole window before the webview can handle it.
     let menu = Menu::with_items(

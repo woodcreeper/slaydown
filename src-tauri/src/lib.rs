@@ -228,6 +228,16 @@ pub fn run() {
     }
     let context = tauri::generate_context!();
     #[cfg(target_os = "linux")]
+    let context = {
+        let mut context = context;
+        // A forced white GTK window shines through transparent native menus,
+        // even when their text correctly follows the desktop's dark theme.
+        for window in &mut context.config_mut().app.windows {
+            window.background_color = None;
+        }
+        context
+    };
+    #[cfg(target_os = "linux")]
     if linux_integration::run_cli(&context) {
         return;
     }

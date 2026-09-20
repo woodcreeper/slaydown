@@ -1,10 +1,10 @@
-# SlayDown 0.3.1 preview
+# SlayDown 0.3.2 preview
 
-Linux installation and upgrades now handle desktop integration automatically. Quit the old app and launch the new SlayDown once: it registers the current executable and icon, migrates Folio Markdown defaults, and installs or refreshes its bundled Sushi adapter. This works with native packages and AppImages. Defaults pointing to another editor are preserved.
+Linux native menus now follow the reader’s light/dark setting without a white strip behind the menu text. System mode restores the desktop preference. Changes made in the preview also update the full reader’s menu.
 
-**Appearance → Linux integration** shows preview status and missing Sushi/WebKit dependencies, offers an explicit default-reader button, and lets you disable preview persistently. After installing Sushi, choose **Check again**. Log out/back in after first installing the adapter or upgrading Sushi. System packages are installed through the normal package manager, never silently by the app.
+Sushi previews have a compact Appearance toolbar without a repeated filename or duplicate Open button. If your default app is another editor, the separate Open in SlayDown action remains available. Windows keeps its existing preview controls.
 
-Reading styles, tint, theme, font size, and document behavior are unchanged. Fresh Omarchy installations still default to Omarchy headings; existing preferences are preserved. Windows continues to use the separate QuickLook companion and plugin; Mac Quick Look is unchanged.
+**Upgrading on Omarchy:** quit the old app, replace it with this version, and launch SlayDown once to refresh the bundled adapter. Close any preview, then log out and back in so Sushi reloads the updated adapter. Your appearance preferences are preserved. Sushi must be installed separately if it is missing; Appearance → Linux integration shows its status.
 
 ## Downloads
 
@@ -21,7 +21,7 @@ Reading styles, tint, theme, font size, and document behavior are unchanged. Fre
 
 ## Preview status
 
-These packages are not Developer ID-signed/notarized on Mac or publisher-signed on Windows. Security prompts are expected; follow the installation guide. The Mac bundle is signed ad hoc. The release workflow requires builds and automated tests on all three platforms before publishing. Space-bar preview was confirmed on physical Omarchy with 0.3.0. The new automatic upgrade flow still needs a physical Omarchy pass; Windows Explorer acceptance is also pending. Preview documents are snapshots; reopen to see edits. The full reader still refreshes automatically.
+These packages are not Developer ID-signed/notarized on Mac or publisher-signed on Windows. Security prompts are expected; follow the installation guide. The Mac bundle is signed ad hoc. The release workflow requires builds and automated tests on all three platforms before publishing. Space-bar preview was confirmed on physical Omarchy with 0.3.0. The native Linux menu and Sushi preview are checked in CI; the 0.3.2 appearance cleanup still needs a physical Omarchy pass; Windows Explorer acceptance is also pending. Preview documents are snapshots; reopen to see edits. The full reader still refreshes automatically.
 
 Mac Quick Look is included and experimental. Enable the extension in System Settings after opening SlayDown once. Its native renderer passes a smoke test; Finder integration needs broader testing. Quick Look uses the default style and image placeholders.
 
