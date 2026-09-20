@@ -155,14 +155,54 @@ fn owned_id(id: &str) -> bool {
             && (id.ends_with("-Folio.desktop") || id.ends_with("-SlayDown.desktop")))
 }
 
+fn config_home() -> Option<PathBuf> {
+    std::env::var_os("XDG_CONFIG_HOME")
+        .filter(|v| !v.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".config")))
+}
+
+fn desktop_defaults_files() -> Vec<String> {
+    std::env::var("XDG_CURRENT_DESKTOP")
+        .unwrap_or_default()
+        .split(':')
+        .filter(|s| {
+            !s.is_empty()
+                && s.chars()
+                    .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+        })
+        .map(|d| format!("{}-mimeapps.list", d.to_ascii_lowercase()))
+        .collect()
+}
+
+fn update_desktop_override(mime: &str) -> Result<(), String> {
+    // GIO writes generic mimeapps.list. A user desktop-specific file has
+    // higher precedence, so update its first applicable entry as well.
+    let config = config_home().ok_or("Your Linux configuration directory could not be found.")?;
+    for name in desktop_defaults_files() {
+        let file = config.join(name);
+        if !file.exists() {
+            continue;
+        }
+        let keys = gio::glib::KeyFile::new();
+        keys.load_from_file(
+            &file,
+            gio::glib::KeyFileFlags::KEEP_COMMENTS | gio::glib::KeyFileFlags::KEEP_TRANSLATIONS,
+        )
+        .map_err(|e| format!("{} could not be read: {e}", file.display()))?;
+        if keys.has_key("Default Applications", mime).unwrap_or(false) {
+            keys.set_string("Default Applications", mime, &format!("{DESKTOP_ID};"));
+            write_changed(&file, keys.to_data().as_bytes())?;
+            break;
+        }
+    }
+    Ok(())
+}
+
 fn configured_default(data: &Path, mime: &str) -> Option<String> {
     // GIO skips a default whose executable was deleted. Preserve explicit
     // choices, but migrate an obsolete Folio ID even when its binary is gone.
-    let home = PathBuf::from(std::env::var_os("HOME")?);
-    let mut dirs = vec![std::env::var_os("XDG_CONFIG_HOME")
-        .filter(|v| !v.is_empty())
-        .map(PathBuf::from)
-        .unwrap_or_else(|| home.join(".config"))];
+    let mut dirs = vec![config_home()?];
     dirs.extend(std::env::split_paths(
         &std::env::var_os("XDG_CONFIG_DIRS").unwrap_or_else(|| "/etc/xdg".into()),
     ));
@@ -174,16 +214,7 @@ fn configured_default(data: &Path, mime: &str) -> Option<String> {
         )
         .map(|d| d.join("applications")),
     );
-    let mut files: Vec<String> = std::env::var("XDG_CURRENT_DESKTOP")
-        .unwrap_or_default()
-        .split(':')
-        .filter(|s| {
-            !s.is_empty()
-                && s.chars()
-                    .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
-        })
-        .map(|d| format!("{}-mimeapps.list", d.to_ascii_lowercase()))
-        .collect();
+    let mut files = desktop_defaults_files();
     files.push("mimeapps.list".into());
     for dir in dirs {
         for name in &files {
@@ -249,6 +280,7 @@ fn register(data: &Path, binary: &Path, make_default: bool) -> Result<bool, Stri
         .ok_or("Linux could not load the SlayDown launcher.")?;
     for (mime, should_migrate) in MIME_TYPES.iter().zip(migrate) {
         if should_migrate {
+            update_desktop_override(mime)?;
             app.set_as_default_for_type(mime)
                 .map_err(|e| e.to_string())?;
         }
@@ -395,7 +427,7 @@ pub fn setup(
     Ok(status)
 }
 
-pub fn run_cli() -> bool {
+pub fn run_cli(context: &tauri::Context<tauri::Wry>) -> bool {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.first().map(String::as_str) != Some("--linux-integrate") {
         return false;
@@ -408,7 +440,6 @@ pub fn run_cli() -> bool {
         {
             return Err("Invalid Linux integration option.".into());
         }
-        let context = tauri::generate_context!();
         let resources =
             tauri::utils::platform::resource_dir(context.package_info(), &Default::default())
                 .map_err(|e| e.to_string())?;

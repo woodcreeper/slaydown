@@ -26,6 +26,13 @@ try {
   assert.equal(defaultFor('text/markdown'), 'SlayDown.desktop');
   assert.equal(defaultFor('text/plain'), 'OtherEditor.desktop');
   assert.ok(readFileSync(join(apps, 'SlayDown.desktop'), 'utf8').includes('%f'));
+  // Desktop-specific files outrank generic mimeapps.list on GNOME/Hyprland.
+  const desktopDefaults = join(config, 'gnome-mimeapps.list');
+  writeFileSync(desktopDefaults, '[Default Applications]\ntext/markdown=Folio.desktop;\ntext/plain=OtherEditor.desktop;\n');
+  assert.equal(setup().defaultReader, true);
+  assert.equal(defaultFor('text/markdown'), 'SlayDown.desktop');
+  assert.equal(defaultFor('text/plain'), 'OtherEditor.desktop');
+  rmSync(desktopDefaults);
 
   // Existing editor choices survive every later launch, even after migration.
   defaults('OtherEditor.desktop');

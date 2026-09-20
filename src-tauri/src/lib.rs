@@ -226,8 +226,9 @@ pub fn run() {
     if preview::run_cli() {
         return;
     }
+    let context = tauri::generate_context!();
     #[cfg(target_os = "linux")]
-    if linux_integration::run_cli() {
+    if linux_integration::run_cli(&context) {
         return;
     }
     let builder = tauri::Builder::default()
@@ -278,7 +279,7 @@ pub fn run() {
             }
             Ok(())
         })
-        .build(tauri::generate_context!())
+        .build(context)
         .expect("SlayDown could not start");
 
     app.run(|app, event| {
