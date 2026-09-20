@@ -4,8 +4,9 @@ import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const timeline=JSON.parse(readFileSync(path.join(root,'src/timeline.json'),'utf8'));
 const input=process.argv[2] || path.join(root,'out/SlayDown-Final.mp4');
+const timelineFile=process.env.SLAYDOWN_TIMELINE || (path.basename(input).includes('Omarchy')?'omarchy-timeline.json':'timeline.json');
+const timeline=JSON.parse(readFileSync(path.join(root,`src/${timelineFile}`),'utf8'));
 const ffmpeg=process.env.FFMPEG || 'ffmpeg';
 const metadata=JSON.parse(execFileSync(process.env.FFPROBE || 'ffprobe',['-v','error','-show_streams','-show_format','-of','json',input],{encoding:'utf8'}));
 const expectedSeconds=timeline.durationInFrames/timeline.fps;

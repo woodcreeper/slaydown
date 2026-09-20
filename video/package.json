@@ -7,10 +7,14 @@
     "audio": "node scripts/soundtrack-recorded.mjs",
     "studio": "node scripts/studio-props.mjs && remotion studio src/index.tsx --props=.cache/studio-props.json",
     "stills": "node scripts/render.mjs --stills",
+    "stills:omarchy": "SLAYDOWN_COMPOSITION=SlayDownOmarchy node scripts/render.mjs --stills",
     "poster": "node scripts/render.mjs --poster",
+    "poster:omarchy": "SLAYDOWN_COMPOSITION=SlayDownOmarchy node scripts/render.mjs --poster",
     "social": "node scripts/social.mjs",
     "render": "node scripts/render.mjs",
-    "verify": "node scripts/verify.mjs"
+    "render:omarchy": "SLAYDOWN_COMPOSITION=SlayDownOmarchy node scripts/render.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:omarchy": "SLAYDOWN_TIMELINE=omarchy-timeline.json node scripts/verify.mjs out/SlayDown-Omarchy-Final.mp4"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.526",
