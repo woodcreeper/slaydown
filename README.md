@@ -35,14 +35,14 @@ Open a Markdown file and get straight to the words. SlayDown keeps your source u
 
 **SlayDown is an early preview.** Get packages from the [Releases page](https://github.com/woodcreeper/slaydown/releases). The release workflow produces the following files after all platform builds and automated tests pass. If a release is still building, you can [build from source](docs/DEVELOPMENT.md).
 
-**[Download SlayDown 0.3.0](https://github.com/woodcreeper/slaydown/releases/tag/v0.3.0)** — the current preview adds Space-bar adapters for Omarchy/Linux and Windows, with shared appearance settings. Older v0.1.0 downloads retain the Folio name.
+**[Download SlayDown 0.3.1](https://github.com/woodcreeper/slaydown/releases/tag/v0.3.1)** — the current preview adds automatic Linux desktop setup and Folio upgrade migration. Space-bar previews share the reader’s appearance settings. Older v0.1.0 downloads retain the Folio name.
 
 | Computer | Download | Requirements |
 | --- | --- | --- |
-| Mac — Apple Silicon or Intel | [SlayDown-macOS-universal.zip](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown-macOS-universal.zip) | macOS 12 or later |
-| Windows PC — x64 | [SlayDown_0.3.0_x64-setup.exe](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown_0.3.0_x64-setup.exe) | Windows 10 or 11; WebView2 |
-| Ubuntu / Debian — x64 | [SlayDown_0.3.0_amd64.deb](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown_0.3.0_amd64.deb) | Ubuntu 22.04+ or a compatible Debian-based desktop with WebKitGTK 4.1 |
-| Other Linux desktops — x64 | [SlayDown_0.3.0_amd64.AppImage](https://github.com/woodcreeper/slaydown/releases/download/v0.3.0/SlayDown_0.3.0_amd64.AppImage) | A compatible glibc-based desktop; see Linux notes below |
+| Mac — Apple Silicon or Intel | [SlayDown-macOS-universal.zip](https://github.com/woodcreeper/slaydown/releases/download/v0.3.1/SlayDown-macOS-universal.zip) | macOS 12 or later |
+| Windows PC — x64 | [SlayDown_0.3.1_x64-setup.exe](https://github.com/woodcreeper/slaydown/releases/download/v0.3.1/SlayDown_0.3.1_x64-setup.exe) | Windows 10 or 11; WebView2 |
+| Ubuntu / Debian — x64 | [SlayDown_0.3.1_amd64.deb](https://github.com/woodcreeper/slaydown/releases/download/v0.3.1/SlayDown_0.3.1_amd64.deb) | Ubuntu 22.04+ or a compatible Debian-based desktop with WebKitGTK 4.1 |
+| Other Linux desktops — x64 | [SlayDown_0.3.1_amd64.AppImage](https://github.com/woodcreeper/slaydown/releases/download/v0.3.1/SlayDown_0.3.1_amd64.AppImage) | A compatible glibc-based desktop; see Linux notes below |
 
 Filenames may vary slightly; choose the matching extension in the release assets. Preview builds are **not Developer ID-signed/notarized on Mac or publisher-signed on Windows**. Mac bundles are signed ad hoc for bundle integrity. Operating systems may show security warnings. Managed computers may require administrator approval. Checksums are included as `SHA256SUMS.txt`.
 
@@ -80,7 +80,7 @@ To use SlayDown for double-clicks, right-click a `.md` file, choose **Open with 
 On Ubuntu or Debian, download the `.deb`, then run the following from its download folder (substitute the actual filename):
 
 ```sh
-sudo apt install ./SlayDown_0.3.0_amd64.deb
+sudo apt install ./SlayDown_0.3.1_amd64.deb
 ```
 
 This installs the package and resolves its system dependencies. Launch SlayDown from your application menu.
@@ -88,17 +88,17 @@ This installs the package and resolves its system dependencies. Launch SlayDown 
 For an AppImage, download the `.AppImage`, then make it executable and run it:
 
 ```sh
-chmod +x SlayDown_0.3.0_amd64.AppImage
-./SlayDown_0.3.0_amd64.AppImage
+chmod +x SlayDown_0.3.1_amd64.AppImage
+./SlayDown_0.3.1_amd64.AppImage
 ```
 
-AppImages are built on Ubuntu 22.04 and are not guaranteed to work on every distribution. If FUSE is unavailable, try `./SlayDown_0.3.0_amd64.AppImage --appimage-extract-and-run`. See [Tauri’s AppImage compatibility notes](https://v2.tauri.app/distribute/appimage/). Linux ARM64 packages are not currently provided.
+AppImages are built on Ubuntu 22.04 and are not guaranteed to work on every distribution. If FUSE is unavailable, try `./SlayDown_0.3.1_amd64.AppImage --appimage-extract-and-run`. See [Tauri’s AppImage compatibility notes](https://v2.tauri.app/distribute/appimage/). Linux ARM64 packages are not currently provided.
 
-Use your file manager’s **Open With** settings to associate Markdown with SlayDown. The `.deb` installs a desktop entry; a standalone AppImage needs desktop integration. If Sushi still says **Open With Folio**, use the [Markdown association repair](preview/README.md#if-sushi-says-open-with-folio). For Space-bar previews in Nautilus/Files, install Sushi itself and the `SlayDown-Sushi.tar.gz` adapter from the release. [Preview setup and troubleshooting](preview/README.md#omarchy--linux-nautilus--sushi).
+Quit the old app, install the update, and launch SlayDown once. It registers the current executable, migrates old Folio Markdown defaults, and installs or refreshes its bundled Sushi adapter when Sushi is available. Other editor defaults are preserved. **Appearance → Linux integration** shows setup status, lets you make SlayDown the default, and enables/disables preview. AppImage users should keep the file in a permanent location; launch it once after moving or replacing it to refresh its launcher and preview path. Sushi itself is a separate system dependency. [Preview setup and troubleshooting](preview/README.md#omarchy--linux-nautilus--sushi).
 
 ### Omarchy / Arch Linux
 
-The app (then named Folio) has been confirmed working on **Omarchy 4.0.4-1, x86_64**, through a user test on a physical machine on September 18, 2026. An [experimental native Arch package and Wayland check](packaging/arch/README.md) are also saved in this repository; that packaging path has not been separately verified. The 0.3.0 Sushi adapter adds Markdown previews to Files’ existing Space-bar workflow. Install it separately using the [preview instructions](preview/README.md#omarchy--linux-nautilus--sushi), then log out/back in. Fresh Omarchy installations default to Omarchy headings; existing preferences are preserved. This is a community Sushi adapter, not an official Omarchy shell plugin.
+The app (then named Folio) has been confirmed working on **Omarchy 4.0.4-1, x86_64**, through a user test on a physical machine on September 18, 2026. An [experimental native Arch package and Wayland check](packaging/arch/README.md) are also saved in this repository; that packaging path has not been separately verified. On September 19 the user also confirmed Space-bar preview works after installing Sushi. In 0.3.1 the app manages its bundled adapter automatically. Install Sushi using the [preview instructions](preview/README.md#omarchy--linux-nautilus--sushi), open SlayDown once, then log out/back in. Fresh Omarchy installations default to Omarchy headings; existing preferences are preserved. This is a community Sushi adapter, not an official Omarchy shell plugin.
 
 ## Make it yours
 

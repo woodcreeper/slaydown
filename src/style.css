@@ -160,3 +160,9 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline:2px solid v
 .tint-swatch[aria-pressed='true'] { box-shadow:0 0 0 2px var(--accent); }
 
 .brand-name { text-transform:uppercase; transform:skewX(-5deg); white-space:nowrap; }
+
+.linux-settings { border-top:1px solid var(--border); margin-top:18px; padding-top:18px; font-size:12px; }
+.linux-settings p { color:var(--muted); line-height:1.5; }
+.linux-settings label { display:flex; align-items:center; gap:8px; margin:12px 0; }
+.linux-settings pre { white-space:pre-wrap; overflow-wrap:anywhere; user-select:text; font-size:11px; padding:10px; border:1px solid var(--border); border-radius:6px; }
+.linux-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }

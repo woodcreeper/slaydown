@@ -2,8 +2,8 @@ import { test, expect, type Page } from '@playwright/test';
 
 const longDocument = '# Reading notes\n\n' + Array.from({ length: 35 }, (_, i) => `## Section ${i + 1}\n\nParagraph ${i + 1}. Words to read, with a clear place to return to after a save.\n\n`).join('');
 
-async function mockDesktop(page: Page) {
-  await page.addInitScript(({ content }) => {
+async function mockDesktop(page: Page, linux = false) {
+  await page.addInitScript(({ content, linux }) => {
     const host = window as any;
     const callbacks = new Map<number, Function>();
     const listeners = new Map<string, number[]>();
@@ -12,6 +12,7 @@ async function mockDesktop(page: Page) {
       doc: { name: 'notes.md', path: '/documents/notes.md', content },
       editor: null,
       appearance: null,
+      linux: linux ? { defaultReader: false, previewEnabled: true, previewReady: false, message: "Space-bar preview needs Sushi.", installCommand: "sudo pacman -S --needed sushi" } : null,
       cancelPicker: false,
       reloadFailures: 0,
       reloadDelay: 0,
@@ -29,6 +30,12 @@ async function mockDesktop(page: Page) {
         if (command === 'plugin:event|listen') {
           listeners.set(args.event, [...(listeners.get(args.event) || []), args.handler]);
           return args.handler;
+        }
+        if (command === 'setup_linux_integration') {
+          if (!host.testHost.linux) return null;
+          if (args.makeDefault) host.testHost.linux.defaultReader = true;
+          if (args.previewEnabled !== null) host.testHost.linux.previewEnabled = args.previewEnabled;
+          return { ...host.testHost.linux };
         }
         if (command === 'get_appearance') {
           if (!host.testHost.appearance) host.testHost.appearance = args.legacy || { theme: 'system', readingStyle: 'omarchy', tint: null, fontSize: 17 };
@@ -57,7 +64,7 @@ async function mockDesktop(page: Page) {
         return null;
       },
     };
-  }, { content: longDocument });
+  }, { content: longDocument, linux });
   await page.goto('/');
   await expect(page.locator('#filename')).toHaveText('notes.md');
   await expect(page.getByRole('button', { name: 'Open in Editor', exact: true })).toBeEnabled();
@@ -205,4 +212,22 @@ test('native appearance migrates an existing choice and synchronizes preview cha
   await page.locator('[data-reading-style-option="code"]').click();
   await expect.poll(() => page.evaluate(() => (window as any).testHost.appearance.readingStyle)).toBe('code');
   await expect(page.locator('#filename')).toHaveText('notes.md');
+});
+
+
+test('Linux setup runs on launch, explains missing Sushi, and respects explicit controls', async ({ page }) => {
+  await mockDesktop(page, true);
+  await expect.poll(() => page.evaluate(() => (window as any).testHost.calls.filter((c: any) => c.command === 'setup_linux_integration').length)).toBe(1);
+  expect(await page.evaluate(() => (window as any).testHost.calls.find((c: any) => c.command === 'setup_linux_integration').args)).toEqual({ makeDefault: false, previewEnabled: null });
+  await page.getByRole('button', { name: 'Appearance settings' }).click();
+  await expect(page.locator('#linux-status')).toContainText('needs Sushi');
+  await expect(page.locator('#linux-install-command')).toContainText('pacman');
+  await page.getByRole('button', { name: 'Use SlayDown for Markdown' }).click();
+  await expect(page.locator('#linux-default')).toBeHidden();
+  await page.getByLabel('Space-bar preview in Files', { exact: true }).uncheck();
+  await expect.poll(() => page.evaluate(() => (window as any).testHost.linux.previewEnabled)).toBe(false);
+  await page.evaluate(() => Object.assign((window as any).testHost.linux, { previewReady: true, previewEnabled: true, message: 'Space-bar preview is ready.', installCommand: null }));
+  await page.getByRole('button', { name: 'Check again' }).click();
+  await expect(page.locator('#linux-status')).toContainText('is ready');
+  await expect(page.locator('#linux-install-command')).toBeHidden();
 });

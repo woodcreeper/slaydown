@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework><UseWPF>true</UseWPF><LangVersion>latest</LangVersion>
-    <AssemblyName>QuickLook.Plugin.SlayDown</AssemblyName><Version>0.3.0</Version>
+    <AssemblyName>QuickLook.Plugin.SlayDown</AssemblyName><Version>0.3.1</Version>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <ItemGroup>

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=SlayDown
+Comment=A beautiful, lightweight Markdown reader
+Exec=slaydown %f
+Icon=slaydown
+Terminal=false
+Categories=Office;
+StartupWMClass=slaydown
+MimeType=text/markdown;text/x-markdown;

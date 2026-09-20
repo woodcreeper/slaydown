@@ -1,9 +1,11 @@
 mod appearance;
-mod preview;
 mod documents;
 mod editor;
+#[cfg(target_os = "linux")]
+mod linux_integration;
 #[cfg(desktop)]
 mod menu;
+mod preview;
 mod watcher;
 
 use documents::{is_markdown, Document, DocumentStore};
@@ -16,6 +18,35 @@ use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_opener::OpenerExt;
 
 type Store = Mutex<DocumentStore>;
+#[tauri::command]
+async fn setup_linux_integration(
+    app: AppHandle,
+    make_default: bool,
+    preview_enabled: Option<bool>,
+) -> Result<Option<serde_json::Value>, String> {
+    #[cfg(target_os = "linux")]
+    {
+        // Development builds must not replace the user's installed release.
+        if cfg!(debug_assertions) {
+            return Ok(None);
+        }
+        let resources = app.path().resource_dir().map_err(|e| e.to_string())?;
+        tauri::async_runtime::spawn_blocking(move || {
+            linux_integration::setup(&resources, make_default, preview_enabled).and_then(|status| {
+                serde_json::to_value(status)
+                    .map(Some)
+                    .map_err(|e| e.to_string())
+            })
+        })
+        .await
+        .map_err(|e| e.to_string())?
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = (app, make_default, preview_enabled);
+        Ok(None)
+    }
+}
 const STORE_ERROR: &str = "The document session could not be accessed. Please reopen SlayDown.";
 
 fn read_into_session(app: &AppHandle, path: &Path) -> Result<Document, String> {
@@ -192,7 +223,13 @@ fn argument_path(arguments: impl Iterator<Item = String>, cwd: &Path) -> Option<
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    if preview::run_cli() { return; }
+    if preview::run_cli() {
+        return;
+    }
+    #[cfg(target_os = "linux")]
+    if linux_integration::run_cli() {
+        return;
+    }
     let builder = tauri::Builder::default()
         .manage(Store::default())
         .manage(watcher::WatchState::default());
@@ -228,7 +265,8 @@ pub fn run() {
             editor::choose_editor,
             watch_document,
             appearance::get_appearance,
-            appearance::set_appearance
+            appearance::set_appearance,
+            setup_linux_integration
         ])
         .setup(|app| {
             #[cfg(desktop)]

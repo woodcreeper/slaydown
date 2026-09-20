@@ -39,6 +39,8 @@ jobs:
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - name: Verify Markdown default repair and exact filename forwarding
         run: dbus-run-session -- python3 scripts/test-linux-desktop.py
+      - name: Verify automatic install and upgrade lifecycle
+        run: SLAYDOWN_EXPECT_SUSHI=1 dbus-run-session -- node scripts/test-linux-lifecycle.mjs /usr/bin/slaydown
       - name: Render Markdown through the actual Sushi host
         run: xvfb-run -a -s "-screen 0 1600x1200x24" dbus-run-session -- bash scripts/test-sushi.sh
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

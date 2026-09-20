@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.3.1 — 2026-09-20
+
+- Linux app launches now register the current executable and icon, migrate old Folio Markdown defaults, and install/update the bundled Sushi adapter. AppImage paths remain valid beyond temporary mounts and are refreshed after moving/replacing the app.
+- Added Linux integration settings for default-reader selection, missing dependencies, and persistent preview enable/disable. Other editor defaults are preserved.
+- Native desktop entries forward selected filenames correctly. The app and scripted installer share the same native lifecycle; the Python repair remains only for older 0.3.0 installations.
 
 - Added a Linux desktop-registration repair for stale Folio Markdown defaults, including AppImage installations. It discovers the working Sushi executable, registers SlayDown with filename forwarding, and verifies the default through GIO. Plain-text associations and installed apps are preserved.
 - Added an explicit `--set-default` option to newly built Sushi installer bundles. Existing v0.3.0 users can download the standalone repair helper from the preview guide.
