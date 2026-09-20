@@ -42,6 +42,7 @@ Open a Markdown file and get straight to the words. SlayDown keeps your source u
 | Mac — Apple Silicon or Intel | [SlayDown-macOS-universal.zip](https://github.com/woodcreeper/slaydown/releases/download/v0.3.2/SlayDown-macOS-universal.zip) | macOS 12 or later |
 | Windows PC — x64 | [SlayDown_0.3.2_x64-setup.exe](https://github.com/woodcreeper/slaydown/releases/download/v0.3.2/SlayDown_0.3.2_x64-setup.exe) | Windows 10 or 11; WebView2 |
 | Ubuntu / Debian — x64 | [SlayDown_0.3.2_amd64.deb](https://github.com/woodcreeper/slaydown/releases/download/v0.3.2/SlayDown_0.3.2_amd64.deb) | Ubuntu 22.04+ or a compatible Debian-based desktop with WebKitGTK 4.1 |
+| Omarchy / Arch Linux — x64 | [slaydown-markdown-0.3.2-1-x86_64.pkg.tar.zst](https://github.com/woodcreeper/slaydown/releases/download/v0.3.2/slaydown-markdown-0.3.2-1-x86_64.pkg.tar.zst) | Install or update with `pacman -U`; see below |
 | Other Linux desktops — x64 | [SlayDown_0.3.2_amd64.AppImage](https://github.com/woodcreeper/slaydown/releases/download/v0.3.2/SlayDown_0.3.2_amd64.AppImage) | A compatible glibc-based desktop; see Linux notes below |
 
 Filenames may vary slightly; choose the matching extension in the release assets. Preview builds are **not Developer ID-signed/notarized on Mac or publisher-signed on Windows**. Mac bundles are signed ad hoc for bundle integrity. Operating systems may show security warnings. Managed computers may require administrator approval. Checksums are included as `SHA256SUMS.txt`.
@@ -98,7 +99,18 @@ Quit the old app, install the update, and launch SlayDown once. It registers the
 
 ### Omarchy / Arch Linux
 
-The app (then named Folio) has been confirmed working on **Omarchy 4.0.4-1, x86_64**, through a user test on a physical machine on September 18, 2026. An [experimental native Arch package and Wayland check](packaging/arch/README.md) are also saved in this repository; that packaging path has not been separately verified. On September 19 the user also confirmed Space-bar preview works after installing Sushi. In 0.3.2 the app manages its bundled adapter automatically. Install Sushi using the [preview instructions](preview/README.md#omarchy--linux-nautilus--sushi), open SlayDown once, then log out/back in. Fresh Omarchy installations default to Omarchy headings; existing preferences are preserved. This is a community Sushi adapter, not an official Omarchy shell plugin.
+Download `slaydown-markdown-0.3.2-1-x86_64.pkg.tar.zst` from the release to install or update the native **slaydown-markdown** package. Quit SlayDown, then run these commands if your browser saved it in Downloads:
+
+```bash
+cd ~/Downloads
+sudo pacman -U ./slaydown-markdown-0.3.2-1-x86_64.pkg.tar.zst
+```
+
+You can type the start of the filename and press **Tab** to complete it. This replaces the installed package and preserves your settings. Open SlayDown once after updating, then log out/back in so Sushi reloads the bundled adapter. There is no AUR/repository listing yet: use the package from each release; `pacman -Syu` alone will not fetch these SlayDown releases.
+
+The release pipeline builds and installs the native package, verifies shared libraries and its desktop entry, and checks Wayland startup. The app has also been confirmed working on physical **x86_64 Omarchy 4.0.4-1**; the user identified their installation as `slaydown-markdown` on September 20, 2026. Each new release still needs physical Omarchy acceptance. See [Arch packaging and verification](packaging/arch/README.md).
+
+Sushi is a separate prerequisite; follow the [preview instructions](preview/README.md#omarchy--linux-nautilus--sushi) if it is missing. Fresh Omarchy installations default to Omarchy headings; existing preferences are preserved. This is a community Sushi adapter, not an official Omarchy shell plugin.
 
 ## Make it yours
 
