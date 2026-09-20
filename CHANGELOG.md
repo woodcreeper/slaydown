@@ -2,6 +2,8 @@
 
 ## 0.3.2 — 2026-09-20
 
+- Added the native `slaydown-markdown` Arch package to release assets and required release checks, with `pacman -U` upgrade instructions for Omarchy.
+
 - Fixed the white strip behind Linux native menus in dark mode. Native menus follow saved light/dark preferences, including changes from Sushi; System restores the desktop preference.
 - Simplified the Sushi preview toolbar: the host owns the filename and its Open action, with compact SlayDown branding and Appearance underneath. When another editor is the default, Open in SlayDown remains available.
 - Added native Linux screenshots and theme-switching regression checks alongside shared-preview browser tests. Windows retains its full preview toolbar.

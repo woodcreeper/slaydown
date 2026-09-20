@@ -30,7 +30,7 @@ WAYLAND_DEBUG=client slaydown "$FOLIO_ROOT/examples/Reading sample.md" > "$FOLIO
 FOLIO_APP_PID=$!
 for attempt in {1..60}; do
   if ! kill -0 "$FOLIO_APP_PID" 2>/dev/null; then cat "$FOLIO_LOG"; exit 1; fi
-  if grep -q 'set_title("SlayDown")' "$FOLIO_LOG" && grep -Eq 'wl_surface@[0-9]+\.attach\(wl_buffer@' "$FOLIO_LOG"; then
+  if grep -q 'set_title("SlayDown")' "$FOLIO_LOG" && grep -Eq 'wl_surface[@#][0-9]+\.attach\(wl_buffer[@#]' "$FOLIO_LOG"; then
     sleep 3
     kill -0 "$FOLIO_APP_PID"
     echo 'Arch Wayland smoke passed: SlayDown opened a native window and submitted a rendered buffer.'

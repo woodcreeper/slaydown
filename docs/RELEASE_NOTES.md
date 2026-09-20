@@ -4,13 +4,14 @@ Linux native menus now follow the reader’s light/dark setting without a white 
 
 Sushi previews have a compact Appearance toolbar without a repeated filename or duplicate Open button. If your default app is another editor, the separate Open in SlayDown action remains available. Windows keeps its existing preview controls.
 
-**Upgrading on Omarchy:** quit the old app, replace it with this version, and launch SlayDown once to refresh the bundled adapter. Close any preview, then log out and back in so Sushi reloads the updated adapter. Your appearance preferences are preserved. Sushi must be installed separately if it is missing; Appearance → Linux integration shows its status.
+**Upgrading on Omarchy:** if your installed package is `slaydown-markdown`, download `slaydown-markdown-0.3.2-1-x86_64.pkg.tar.zst` and install it with `sudo pacman -U /path/to/the/downloaded/file.pkg.tar.zst`. Quit the old app first, then launch SlayDown once to refresh the bundled adapter. AppImage users should replace their downloaded app file instead. Close any preview, then log out and back in so Sushi reloads the updated adapter. Your appearance preferences are preserved. Sushi must be installed separately if it is missing; Appearance → Linux integration shows its status.
 
 ## Downloads
 
 - **Mac (Apple Silicon + Intel, macOS 12+):** `SlayDown-macOS-universal.zip`. Unzip and move SlayDown to Applications.
 - **Windows x64:** download and run the `-setup.exe` installer.
 - **Linux x64:** install the `.deb` on a compatible Ubuntu/Debian desktop, or make the `.AppImage` executable and run it.
+- **Omarchy / Arch x64:** `slaydown-markdown-0.3.2-1-x86_64.pkg.tar.zst`. Use `pacman -U` to install or update the native package.
 - **Omarchy/Linux preview:** included in the app. Install Sushi separately if missing, then open SlayDown once. The optional `SlayDown-Sushi.tar.gz` remains for scripted/legacy installs.
 - **Windows preview:** `SlayDown-QuickLook.qlplugin`. Install QuickLook 4.5.0+, select this plugin in Explorer, press Space, install, and restart QuickLook.
 - **SHA256SUMS.txt:** checksums for all app packages and adapters.

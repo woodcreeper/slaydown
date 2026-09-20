@@ -49,6 +49,7 @@ jobs:
         run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
       - run: npm ci
       - run: npm test
+      - run: node --test scripts/prepare-release.test.mjs
       - run: npm run build
       - run: cargo test --locked --manifest-path src-tauri/Cargo.toml
       - name: Browser interaction tests
@@ -107,8 +108,17 @@ jobs:
     uses: ./.github/workflows/sushi-check.yml
     with:
       build_run_id: ${{ github.run_id }}
+  arch:
+    name: Arch package
+    needs: build
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/arch-preview.yml
+    with:
+      build_run_id: ${{ github.run_id }}
   release:
-    needs: [build, sushi]
+    needs: [build, sushi, arch]
     if: github.event_name == 'workflow_dispatch' && inputs.version != '' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
