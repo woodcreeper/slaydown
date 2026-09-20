@@ -34,6 +34,9 @@ from PIL import Image, ImageStat
 image = Image.open(sys.argv[1]).convert('RGB')
 menu = ImageStat.Stat(image.crop((350, 5, 450, 15))).mean
 reader = ImageStat.Stat(image.crop((1080, 400, 1090, 420))).mean
+# A blank startup window can match the expected palette; require rendered text.
+content = ImageStat.Stat(image.crop((310, 210, 1000, 430))).stddev
+assert max(content) > 15, ('Document has not rendered yet', content)
 is_dark = sys.argv[2] == 'dark'
 assert all((sum(rgb) / 3 < 100) if is_dark else (sum(rgb) / 3 > 180) for rgb in [menu, reader]), (menu, reader)
 PY
@@ -42,8 +45,9 @@ PY
   return 1
 }
 check_theme dark dark
-# Retain native File menu and document shortcuts, including its readable popup.
-xdotool mousemove --window "$window" 22 12 click 1
+# Capture the native File menu and its shortcut labels after rendering.
+xdotool key F10
+xdotool key Down
 sleep 1
 scrot --overwrite "$root/test-results/linux-dark-menu.png"
 xdotool key Escape
