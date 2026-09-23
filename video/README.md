@@ -1,6 +1,6 @@
-# SlayDown product film
+# SlayDown product films
 
-A 30-second, 1080p Remotion walkthrough: your AI agent creates Markdown → select a file in Finder → press Space → double-click into SlayDown → edit in your own app → see the saved change. The [script and storyboard](SCRIPT.md) describe every shot. Production notes live here; the main README presents the finished demo.
+Two separate 30-second, 1080p Remotion walkthroughs share the SlayDown identity, infrastructure, and soundtrack. `SlayDown` is the original macOS composition and remains the default. `SlayDownOmarchy` is an Omarchy/Arch Linux composition built entirely from authentic captures made on the production computer. The [macOS script and storyboard](SCRIPT.md) describe the original cut; [Omarchy capture provenance](OMARCHY_CAPTURE.md) documents the Linux sources.
 
 The SlayDown cut uses the bundled Metal Mania wordmark and “Eyesplit” by Shane Ivers, a recorded 154 BPM metal instrumental. The user approved this soundtrack on September 19, 2026. The 30-second excerpt fades under the end card. There is no narration. See [music attribution and source details](MUSIC.md).
 
@@ -16,21 +16,38 @@ npm run verify
 npm run social
 ```
 
+Render and verify the Omarchy composition without changing the macOS outputs:
+
+```sh
+cd video
+npm ci
+npm run poster:omarchy
+npm run stills:omarchy
+npm run render:omarchy
+npm run verify:omarchy
+```
+
 The screenshots are committed, so rendering needs no running SlayDown or editor instance. Rendering uses installed Google Chrome on Mac; set `REMOTION_BROWSER` to another Chromium executable if needed. The approved audio excerpt is committed as `public/eyesplit.m4a`, so ordinary rendering needs no music download. The final mux copies its AAC stream directly to avoid another lossy audio encode. To rebuild the excerpt from the artist’s original MP3, see [MUSIC.md](MUSIC.md). FFmpeg and FFprobe must be on PATH, or set `FFMPEG` and `FFPROBE`. Metal Mania is loaded from the bundled font. Other titles use local Iowan Old Style/Baskerville with Georgia fallback; render on Mac for matching typography.
 
 - `src/SlayDownFilm.tsx`: scenes, copy, crops, and animation.
+- `src/SlayDownOmarchyFilm.tsx`: separate Omarchy/Linux scenes, copy, and authentic capture crops.
 - `src/timeline.json`: the shared 900-frame timeline, review frames, and static intervals.
+- `src/omarchy-timeline.json`: the Omarchy cut’s 900-frame scene and review timing.
 - `public/Agent workspace/`: public demo documents.
+- `public/Omarchy demo/PLAN.md`: the public Linux capture document.
 - `public/screenshots/slaydown-*.png`: the walkthrough captures.
+- `public/screenshots/omarchy/`: the 12 authentic full-monitor Omarchy captures.
 - `public/eyesplit.m4a`: approved licensed soundtrack excerpt.
 - `scripts/soundtrack-recorded.mjs`: reproducible trim, fade, and loudness normalization.
 - `scripts/soundtrack.py`: rejected synthesized experiment, retained as historical source.
 - `scripts/soundtrack-warm.py`: the previous warm score, retained as an optional alternative.
 - `out/SlayDown-Final.mp4`: H.264/AAC export.
 - `out/SlayDown-Cover.png`: fully visible frame-zero splash.
+- `out/SlayDown-Omarchy-Final.mp4`: separate Omarchy H.264/AAC export.
+- `out/SlayDown-Omarchy-Cover.png`: separate Omarchy frame-zero cover.
 - `src/SlayDownSocial.tsx`: the 1280 × 640 social card.
 
-Working exports and full source downloads are ignored. The approved licensed audio excerpt is versioned. The approved distribution MP4 belongs in `docs/media/SlayDownDemo.mp4`, with its cover in `docs/images/slaydown-video-poster.png`. Replace those files only after reviewing the rendered candidate.
+Working exports and full source downloads are ignored. The approved licensed audio excerpt is versioned. The macOS distribution MP4 remains `docs/media/SlayDownDemo.mp4`, with its cover in `docs/images/slaydown-video-poster.png`. The Omarchy cut is published separately as `docs/media/SlayDownOmarchyDemo.mp4`, with `docs/images/slaydown-omarchy-video-poster.png`. Never replace the macOS files while producing the Linux cut.
 
 `SLAYDOWN_FRAMES=0,490,759 npm run stills` selects specific review frames. `SLAYDOWN_AUDIO_FROM=/absolute/path/approved.mp4 npm run render` preserves encoded audio from a separate approved MP4 of the **same duration**. The old `FOLIO_FRAMES` and `FOLIO_AUDIO_FROM` names remain accepted. Do not reuse the old 42-second film’s audio in this 30-second cut.
 

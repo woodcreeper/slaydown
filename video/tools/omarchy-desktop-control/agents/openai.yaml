@@ -1,0 +1,4 @@
+interface:
+  display_name: "Omarchy Desktop Control"
+  short_description: "Scoped Hyprland capture and input control"
+  default_prompt: "Use $omarchy-desktop-control to inspect and operate the permitted Omarchy apps."
