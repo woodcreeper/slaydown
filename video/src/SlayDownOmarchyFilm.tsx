@@ -57,7 +57,7 @@ function Base({children, dark = false}: {children: React.ReactNode; dark?: boole
   );
 }
 
-function Brand({dark = false, label}: {dark?: boolean; label: string}) {
+function Brand({dark = false}: {dark?: boolean}) {
   const color = dark ? '#f4f1f8' : ink;
   return (
     <div
@@ -68,7 +68,6 @@ function Brand({dark = false, label}: {dark?: boolean; label: string}) {
         right: 96,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         color,
       }}
     >
@@ -86,20 +85,17 @@ function Brand({dark = false, label}: {dark?: boolean; label: string}) {
           SlayDown<span style={{color: amber}}>.</span>
         </span>
       </div>
-      <div style={{fontSize: 13, letterSpacing: 3.5, fontWeight: 650, opacity: 0.64}}>{label}</div>
     </div>
   );
 }
 
 function Copy({
-  eyebrow,
   title,
   subtitle,
   dark = false,
   y = 270,
   size = 78,
 }: {
-  eyebrow: string;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   dark?: boolean;
@@ -108,21 +104,6 @@ function Copy({
 }) {
   return (
     <div style={{position: 'absolute', left: 104, top: y, width: 500}}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 17,
-          color: dark ? '#d8b97e' : violet,
-          fontSize: 13,
-          letterSpacing: 3,
-          fontWeight: 650,
-          marginBottom: 24,
-        }}
-      >
-        <span style={{width: 32, height: 1, background: 'currentColor'}} />
-        {eyebrow}
-      </div>
       <div style={{fontFamily: serif, fontSize: size, lineHeight: 1.06, letterSpacing: -2.3}}>{title}</div>
       {subtitle ? (
         <div
@@ -206,29 +187,9 @@ function Key({label, pressed = false}: {label: string; pressed?: boolean}) {
   );
 }
 
-function ShotLabel({children}: {children: React.ReactNode}) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        right: 107,
-        bottom: 69,
-        fontSize: 16,
-        color: muted,
-        letterSpacing: 0.6,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 function Splash() {
   return (
     <Base dark>
-      <div style={{position: 'absolute', left: 108, top: 82, color: '#d8b97e', fontSize: 17, letterSpacing: 3.5, fontWeight: 650}}>
-        MARKDOWN, AT HOME ON YOUR DESKTOP
-      </div>
       <div style={{position: 'absolute', left: 108, top: 230, width: 1380}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 27}}>
           <Mark size={86} color="#d6c5e9" />
@@ -236,13 +197,11 @@ function Splash() {
             SlayDown<span style={{color: amber}}>.</span>
           </div>
         </div>
-        <div style={{fontFamily: serif, fontSize: 84, lineHeight: 1.07, letterSpacing: -2.5, marginTop: 41}}>
-          SlayDown for<br />Omarchy / Linux
+        <div style={{fontFamily: serif, fontSize: 88, lineHeight: 1.04, letterSpacing: -2.5, marginTop: 41}}>
+          Your agent makes .md files<br />like a boss.
         </div>
-        <div style={{fontSize: 27, color: '#d6c5e9', marginTop: 42}}>Your agent writes it. You read it beautifully.</div>
+        <div style={{fontSize: 27, color: '#d6c5e9', marginTop: 42}}>Now read them like one too.</div>
       </div>
-      <div style={{position: 'absolute', left: 108, bottom: 70, color: '#b5aabd', fontSize: 18, letterSpacing: 2.3}}>30 SECONDS · REAL OMARCHY CAPTURES</div>
-      <div style={{position: 'absolute', right: 110, bottom: 66, color: '#f2edf8', fontSize: 21}}>github.com/woodcreeper/slaydown</div>
     </Base>
   );
 }
@@ -251,10 +210,9 @@ function AgentPlan() {
   const frame = useCurrentFrame();
   return (
     <Base dark>
-      <Brand dark label="THE AGENT CREATES PLAN.MD" />
-      <Copy eyebrow="A PUBLIC DEMO FILE" title={<>Your agent<br />makes a plan.</>} subtitle="Real Markdown, written locally on Omarchy." dark y={292} size={84} />
+      <Brand dark />
+      <Copy title={<>PLAN.md,<br />ready.</>} subtitle="Written locally by your agent on Omarchy." dark y={316} size={88} />
       <Screen name="agent-plan" style={{left: 650, top: 180, opacity: tween(frame, 0, 10, 0, 1), transform: `translateY(${tween(frame, 0, 14, 14, 0)}px)`}} />
-      <ShotLabel>Codex · PLAN.md · Omarchy</ShotLabel>
     </Base>
   );
 }
@@ -263,11 +221,10 @@ function NautilusPlan() {
   const frame = useCurrentFrame();
   return (
     <Base>
-      <Brand label="THE FILE IS RIGHT WHERE YOU EXPECT" />
-      <Copy eyebrow="NAUTILUS" title={<>Select<br />PLAN.md.</>} subtitle="No import. No copy. Just the original file." y={282} size={88} />
+      <Brand />
+      <Copy title={<>Find it.<br />Select it.</>} subtitle="The original PLAN.md is already in Nautilus." y={306} size={88} />
       <Screen name="nautilus-plan" style={{left: 650, top: 180, transform: `translateY(${tween(frame, 0, 18, 12, 0)}px)`}} />
       <div style={{position: 'absolute', left: 108, top: 730}}><Key label="Space  ␣" pressed={frame >= 48} /></div>
-      <ShotLabel>Nautilus · PLAN.md selected</ShotLabel>
     </Base>
   );
 }
@@ -276,11 +233,10 @@ function SushiPreview() {
   const frame = useCurrentFrame();
   return (
     <Base>
-      <Brand label="ONE KEY. A BEAUTIFUL READ." />
-      <Copy eyebrow="SUSHI + SLAYDOWN" title={<>Space.<br />And there<br />it is.</>} subtitle="A native preview, with SlayDown ready to open." y={230} size={85} />
+      <Brand />
+      <Copy title={<>Quick View<br />with Space.</>} subtitle="Start reading without leaving Nautilus." y={292} size={84} />
       <div style={{position: 'absolute', left: 108, top: 805}}><Key label="Space  ␣" pressed={frame < 16} /></div>
       <Screen name="sushi-preview" style={{left: 650, top: 180, opacity: tween(frame, 0, 12, 0, 1), transform: `scale(${tween(frame, 0, 18, 0.985, 1)})`}} />
-      <ShotLabel>Nautilus preview · Open With SlayDown</ShotLabel>
     </Base>
   );
 }
@@ -290,12 +246,10 @@ function OpenReader() {
   const mix = tween(frame, 22, 42, 0, 1);
   return (
     <Base>
-      <Brand label="THE SAME FILE. MORE ROOM." />
-      <Copy eyebrow="OPEN IN SLAYDOWN" title={<>Take the<br />full view.</>} subtitle="Keep the outline close and the document centered." y={285} size={88} />
+      <Brand />
+      <Copy title={<>Double-click<br />to go deeper.</>} subtitle="The same file opens in the full SlayDown reader." y={302} size={78} />
       <Screen name="sushi-preview" style={{left: 650, top: 180, opacity: 1 - mix}} />
       <Screen name="reader-outline" style={{left: 650, top: 180, opacity: mix}} />
-      <div style={{position: 'absolute', left: 108, top: 740, color: violet, fontSize: 22}}>Open in SlayDown →</div>
-      <ShotLabel>SlayDown reader · PLAN.md</ShotLabel>
     </Base>
   );
 }
@@ -307,8 +261,8 @@ function Features() {
   const labels = ['Outline at a glance', 'Omarchy reading style', 'Search inside the document'];
   return (
     <Base>
-      <Brand label="THE FULL SLAYDOWN READER" />
-      <Copy eyebrow="YOUR READING TOOLKIT" title={<>Find your<br />way around.</>} y={238} size={78} />
+      <Brand />
+      <Copy title={<>Read it<br />like a boss.</>} y={280} size={82} />
       <div style={{position: 'absolute', left: 108, top: 540, width: 435}}>
         {labels.map((label, index) => (
           <div key={label} style={{display: 'flex', alignItems: 'center', gap: 17, padding: '20px 0', borderBottom: '1px solid #ddd7e5', color: index === active ? ink : '#a59ead', fontSize: 23}}>
@@ -318,7 +272,6 @@ function Features() {
         ))}
       </div>
       <Screen name={names[active]} style={{left: 650, top: 180}} />
-      <ShotLabel>{active === 0 ? 'Outline' : active === 1 ? 'Omarchy preset' : 'Search · “automatic refresh”'}</ShotLabel>
     </Base>
   );
 }
@@ -328,12 +281,10 @@ function Handoff() {
   const mix = tween(frame, 32, 47, 0, 1);
   return (
     <Base>
-      <Brand label="YOUR ORIGINAL FILE. YOUR EDITOR." />
-      <Copy eyebrow="OPEN IN EDITOR" title={<>Back to<br />the work.</>} subtitle="SlayDown hands the original PLAN.md to Zed." y={285} size={86} />
+      <Brand />
+      <Copy title={<>Open in your<br />favorite editor.</>} subtitle="The original PLAN.md goes straight to Zed." y={300} size={74} />
       <Screen name="reader-outline" style={{left: 650, top: 180, opacity: 1 - mix}} />
       <Screen name="zed-before" style={{left: 650, top: 180, opacity: mix}} />
-      {frame < 38 ? <div style={{position: 'absolute', left: 1490, top: 310, padding: '12px 19px', borderRadius: 999, background: '#f5f4f7e8', color: ink, fontSize: 19, boxShadow: '0 8px 30px #0003'}}>Open in Editor ↗</div> : null}
-      <ShotLabel>SlayDown → Zed</ShotLabel>
     </Base>
   );
 }
@@ -344,11 +295,10 @@ function Edit() {
   const heading = frame < 25 ? 'Select the heading' : frame < 50 ? 'Ready to replace' : frame < 75 ? '# A plan' : frame < 100 ? '# A plan worth' : '# A plan worth sharing';
   return (
     <Base dark>
-      <Brand dark label="EDIT THE ORIGINAL IN ZED" />
-      <Copy eyebrow="ONE HEADING, THREE BEATS" title={<>Make it<br />worth sharing.</>} subtitle={heading} dark y={260} size={82} />
+      <Brand dark />
+      <Copy title={<>Make it<br />worth sharing.</>} subtitle={heading} dark y={300} size={82} />
       <Screen name={state} crop={[0, 35, 2800, 1120]} style={{left: 650, top: 245}} />
       {frame >= 125 ? <div style={{position: 'absolute', left: 108, top: 735}}><Key label="Ctrl  +  S    Saved" pressed={frame < 140} /></div> : null}
-      <ShotLabel>Zed · {state === 'zed-selected' ? 'heading selected' : heading}</ShotLabel>
     </Base>
   );
 }
@@ -357,11 +307,9 @@ function Refresh() {
   const frame = useCurrentFrame();
   return (
     <Base>
-      <Brand label="SAVE THERE. SEE IT HERE." />
-      <Copy eyebrow="AUTOMATIC REFRESH" title={<>SlayDown<br />keeps up.</>} subtitle="The heading and outline update without reopening." y={270} size={84} />
+      <Brand />
+      <Copy title={<>SlayDown<br />remembers.</>} subtitle="Save once. The heading and outline update before your eyes." y={306} size={82} />
       <Screen name="reader-refreshed" style={{left: 650, top: 180, opacity: tween(frame, 0, 12, 0, 1), transform: `translateY(${tween(frame, 0, 16, 10, 0)}px)`}} />
-      <div style={{position: 'absolute', left: 108, top: 742, display: 'flex', alignItems: 'center', gap: 12, color: violet, fontSize: 22}}><span style={{fontSize: 27}}>↻</span> Live preview</div>
-      <ShotLabel>A plan worth sharing · updated live</ShotLabel>
     </Base>
   );
 }
@@ -369,19 +317,23 @@ function Refresh() {
 function Outro() {
   return (
     <Base dark>
-      <Brand dark label="READ IT. THEN KEEP BUILDING." />
       <div style={{position: 'absolute', left: 106, top: 224, width: 1500}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 25}}>
           <Mark size={86} color="#d6c5e9" />
           <div style={{fontFamily: metal, fontSize: 132, textTransform: 'uppercase', transform: 'skewX(-5deg)', lineHeight: 1.1}}>SlayDown<span style={{color: amber}}>.</span></div>
         </div>
-        <div style={{fontFamily: serif, fontSize: 82, lineHeight: 1.12, letterSpacing: -2, color: '#e5ddeb', marginTop: 38}}>SlayDown for<br />Omarchy / Linux</div>
-        <div style={{fontSize: 25, color: '#b5aabd', marginTop: 39}}>Preview. Explore. Edit. Keep reading.</div>
-        <div style={{fontSize: 27, color: '#f2edf8', marginTop: 70}}>github.com/woodcreeper/slaydown</div>
+        <div style={{fontFamily: serif, fontSize: 88, lineHeight: 1.08, letterSpacing: -2, color: '#e5ddeb', marginTop: 38}}>Don’t Markdown.<br />SlayDown.</div>
+        <div style={{fontSize: 27, color: '#d6c5e9', marginTop: 38}}>SlayDown for Omarchy / Linux</div>
+        <div style={{fontSize: 27, color: '#f2edf8', marginTop: 64}}>github.com/woodcreeper/slaydown</div>
       </div>
-      <div style={{position: 'absolute', right: 113, bottom: 74, color: '#d8b97e', fontSize: 17, letterSpacing: 3}}>BUILT ON LINUX · AUTHENTIC OMARCHY CAPTURES</div>
     </Base>
   );
+}
+
+function SceneTransition({children, duration}: {children: React.ReactNode; duration: number}) {
+  const frame = useCurrentFrame();
+  const reveal = duration === 0 ? 0 : tween(frame, 0, duration, 100, 0);
+  return <AbsoluteFill style={{clipPath: `inset(0 ${reveal}% 0 0)`}}>{children}</AbsoluteFill>;
 }
 
 export function SlayDownOmarchyFilm() {
@@ -409,9 +361,14 @@ export function SlayDownOmarchyFilm() {
   return (
     <AbsoluteFill style={{background: paper}}>
       <Audio src={staticFile('eyesplit.m4a')} volume={1} />
-      {Object.entries(scenes).map(([name, Scene]) => {
+      {Object.entries(scenes).map(([name, Scene], index) => {
         const [from, durationInFrames] = timeline.scenes[name as keyof typeof timeline.scenes];
-        return <Sequence key={name} from={from} durationInFrames={durationInFrames}><Scene /></Sequence>;
+        const overlap = index === 0 ? 0 : 10;
+        return (
+          <Sequence key={name} from={from - overlap} durationInFrames={durationInFrames + overlap}>
+            <SceneTransition duration={overlap}><Scene /></SceneTransition>
+          </Sequence>
+        );
       })}
     </AbsoluteFill>
   );
